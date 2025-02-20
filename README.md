@@ -28,4 +28,7 @@ Meus pronomes são ele/dele.
 ⚡ Curiosidade
 Uma curiosidade: comecei minha jornada profissional aos 14 anos e, até hoje, acredito que aprendizado contínuo, trabalho em equipe, humildade, fé e perseverança são os maiores aliados para o sucesso!
 
-![35988bf09ce2be958e36f4bc8f4575d1](https://github.com/user-attachments/assets/d3f13bd4-c266-4c8d-9716-13819f3d73f2)
+
+<p align="center">
+  <img src:"![35988bf09ce2be958e36f4bc8f4575d1](https://github.com/user-attachments/assets/d3f13bd4-c266-4c8d-9716-13819f3d73f2)" alt="GIF">
+</p>
