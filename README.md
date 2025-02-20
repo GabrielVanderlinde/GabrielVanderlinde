@@ -20,7 +20,7 @@ Gostaria de receber dicas e orientações sobre Java, acessibilidade web e como 
 Você pode me perguntar sobre HTML, CSS, minha jornada profissional ou sobre como venho aplicando a ética profissional e o trabalho em equipe em minha trajetória.
 
 📫 Como me encontrar<br>
-Você pode me encontrar através do meu GitHub ou me enviar um e-mail para gabrielvanderlindezzl@gmail.com.
+Você pode me encontrar através do meu GitHub ou me enviar um e-mail para gabrielvanderlindezz@gmail.com.
 
 😄 Pronomes<br>
 Meus pronomes são ele/dele.
