@@ -4,7 +4,7 @@
 **GabrielVanderlinde/GabrielVanderlinde** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 -->
 
-🔭 Atualmente estou trabalhando em
+🔭 Atualmente estou trabalhando em<br>
 Estou me dedicando ao aprendizado em Desenvolvimento de Sistemas pelo SENAI, buscando adquirir uma base sólida para minha carreira na área de tecnologia.
 
 🌱 Atualmente estou aprendendo<br>
