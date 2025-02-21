@@ -25,7 +25,7 @@ Você pode me encontrar através do meu GitHub ou me enviar um e-mail para gabri
 😄 Pronomes<br>
 Meus pronomes são ele/dele.
 
-⚡ Curiosidade
+⚡ Curiosidade<br>
 Uma curiosidade: comecei minha jornada profissional aos 14 anos e, até hoje, acredito que aprendizado contínuo, trabalho em equipe, humildade, fé e perseverança são os maiores aliados para o sucesso!
 <br><br>
 ![35988bf09ce2be958e36f4bc8f4575d1](https://github.com/user-attachments/assets/d3f13bd4-c266-4c8d-9716-13819f3d73f2)
