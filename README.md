@@ -20,11 +20,3 @@
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" width="42"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" width="42"/>
 </p>
-
-<p align="center">
-  Estudando continuamente • Clean Code • Boas práticas
-</p>
-
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=GabrielVanderlinde&show_icons=true&hide_title=true&hide_border=true" />
-</p>
