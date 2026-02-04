@@ -14,7 +14,7 @@ Atualmente estou em constante evolução através de cursos, projetos práticos 
 
 ---
 
-### 🤖 Languages and Technologies
+### Languages and Technologies
 
 <p align="left">
   <!-- Front-End -->
