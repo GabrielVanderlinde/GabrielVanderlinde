@@ -1,4 +1,4 @@
-## 🧑🏼‍💻 Gabriel Vanderlinde
+## Gabriel Vanderlinde
 
 ![Fullstack Developer](https://img.shields.io/badge/Fullstack%20Developer-0d1117?style=for-the-badge)
 
