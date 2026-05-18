@@ -2,7 +2,7 @@
 
 ![Fullstack Developer](https://img.shields.io/badge/Fullstack%20Developer-0d1117?style=for-the-badge)
 
-Me chamo Gabriel, sou estudante e desenvolvedor Fullstack, com foco em **Java + Spring Boot** no back-end e **HTML, CSS, JavaScript e React** no front-end.  
+Me chamo Gabriel, sou estudante e desenvolvedor Fullstack, com foco em **Java + Spring Boot** no back-end e **HTML, CSS, NestJS e React** no front-end.  
 Atualmente estou em constante evolução através de cursos, projetos práticos e trabalhando em sistemas voltados a Defesa Civil.
 
 <a href="mailto:gabrielvanderlindezz@gmail.com">
