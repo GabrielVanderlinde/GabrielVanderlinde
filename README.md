@@ -12,7 +12,7 @@ Atualmente estou em constante evolução através de cursos, projetos práticos 
   <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white"/>
 </a>
 
----
+----
 
 ### Languages and Technologies
 
