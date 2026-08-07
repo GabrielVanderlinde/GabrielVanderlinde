@@ -127,7 +127,7 @@ Never stop learning 🚀
 <img src="https://img.shields.io/badge/GitHub-000000?style=for-the-badge&logo=github"/>
 </a>
 
-<a href="www.linkedin.com/in/gabrielhenriquevanderlinde">
+<a href="[www.linkedin.com/in/gabrielhenriquevanderlinde](https://www.linkedin.com/in/gabrielhenriquevanderlinde/)">
 <img src="https://img.shields.io/badge/LinkedIn-8A2BE2?style=for-the-badge&logo=linkedin&logoColor=white"/>
 </a>
 
