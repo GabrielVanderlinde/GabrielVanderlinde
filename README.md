@@ -38,40 +38,41 @@ const Gabriel = {
 
  location: "Blumenau, Brazil 🇧🇷",
 
- stack: {
+stack: {
     frontend: [
-      "React",
+      "HTML",
+      "CSS",
       "JavaScript",
       "TypeScript",
-      "HTML",
-      "CSS"
+      "React"
     ],
 
     backend: [
-      "Java",
+      "Node.js",
       "NestJS",
+      "Java",
+      "Spring Boot",
+      "Python"
     ],
 
-    database: [
+    database_and_orm: [
       "MySQL",
-      "MongoDB",
       "PostgreSQL",
-      "TimescaleDB"
+      "MongoDB",
+      "TimescaleDB",
+      "Prisma"
     ]
  },
 
- tools: [
-   "Git",
-   "GitHub",
-   "Azure",
-   "VS Code",
-   "IntelliJ",
-   "Podman Desktop",
-   "Docker Desktop"
- ],
+ devops_and_tools: {
+    environment: ["Linux", "Ubuntu", "PowerShell", "npm"],
+    version_control: ["Git", "GitHub"],
+    cloud_and_containers: ["Azure", "Docker", "Podman", "Podman Desktop"],
+    observability: ["Prometheus", "Grafana", "Loki", "Tempo"],
+    ide_and_testing: ["VS Code", "IntelliJ IDEA", "PyCharm", "Postman"]
+ },
 
- passion:
- "Building experiences 🚀"
+ passion: "Building experiences 🚀"
 
 }
 ```
@@ -93,7 +94,7 @@ const Gabriel = {
 ```bash
 > Loading objectives...
 
-[██████████] React Development
+[██████████] Development
 
 [████████░░] Backend Skills
 
