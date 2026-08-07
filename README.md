@@ -1,8 +1,8 @@
 <div align="center">
 
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&height=300&color=0:050505,50:6d28d9,100:a855f7&text=GABRIEL%VANDERLINDE&fontSize=65&fontColor=ffffff&animation=fadeIn&fontAlignY=35"/>
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&height=300&color=0:050505,50:6d28d9,100:a855f7&text=GABRIEL+VANDERLINDE&fontSize=65&fontColor=ffffff&animation=fadeIn&fontAlignY=35"/>
 
-<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=26&duration=2500&pause=800&color=C084FC&center=true&vCenter=true&width=900&lines=SYSTEM+BOOTING...;FULL+STACK+DEVELOPER;REACT+%7C+JAVA+%7C+PYTHON;AI+%7C+SOFTWARE+ENGINEERING;WELCOME+TO+MY+CODE+UNIVERSE"/>
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=26&duration=2500&pause=800&color=C084FC&center=true&vCenter=true&width=900&lines=SYSTEM+BOOTING...;FULL+STACK+DEVELOPER;NESTJS+%7C+JAVA+%7C+JS;AI+%7C+SOFTWARE+DEVELOPER;WELCOME+TO+MY+CODE+UNIVERSE"/>
 
 </div>
 
@@ -30,7 +30,7 @@ STATUS: ONLINE
 ## About Me
 
 ```javascript
-const Sophia = {
+const Gabriel = {
 
  name: "Gabriel H. Vanderlinde",
 
@@ -82,13 +82,13 @@ const Sophia = {
 
 <div align="center">
 
-<img src="https://skillicons.dev/icons?i=html,css,js,ts,react,nestjs,java,python,mysql,mongodb,postgresql,timescale,git,github,vscode,inteliij,azure,docker&perline=8"/>
+<img src="https://skillicons.dev/icons?i=html,css,js,ts,react,nestjs,java,javascript,mysql,mongodb,postgresql,git,github,vscode,azure,docker&perline=8"/>
 
 </div>
 
 ---
 
-## 🧠 Current Mission
+## Current Mission
 
 ```bash
 > Loading objectives...
@@ -111,9 +111,9 @@ Never stop learning 🚀
 
 <div align="center">
 
-<img height="170" src="https://github-readme-stats.vercel.app/api?username=sophiahonopato&show_icons=true&theme=tokyonight&hide_border=true"/>
+<img height="170" src="https://github-readme-stats.vercel.app/api?username=gabrielvanderlinde&show_icons=true&theme=tokyonight&hide_border=true"/>
 
-<img height="170" src="https://github-readme-stats.vercel.app/api/top-langs/?username=sophiahonopato&layout=compact&theme=tokyonight&hide_border=true"/>
+<img height="170" src="https://github-readme-stats.vercel.app/api/top-langs/?username=gabrielvanderlinde&layout=compact&theme=tokyonight&hide_border=true"/>
 
 </div>
 
@@ -121,27 +121,7 @@ Never stop learning 🚀
 
 <div align="center">
 
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=sophiahonopato&theme=tokyonight&hide_border=true"/>
-
-</div>
-
----
-
-## GitHub Trophies
-
-<div align="center">
-
-<img src="https://github-profile-trophy.vercel.app/?username=sophiahonopato&theme=tokyonight&no-frame=true&margin-w=15"/>
-
-</div>
-
----
-
-## Contribution Animation
-
-<div align="center">
-
-<img src="https://raw.githubusercontent.com/sophiahonopato/sophiahonopato/output/github-contribution-grid-snake-dark.svg"/>
+<img src="https://github-readme-streak-stats.herokuapp.com/?user=gabrielvanderlinde&theme=tokyonight&hide_border=true"/>
 
 </div>
 
