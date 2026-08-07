@@ -82,7 +82,7 @@ const Gabriel = {
 
 <div align="center">
 
-<img src="https://skillicons.dev/icons?i=html,css,js,ts,react,nestjs,java,javascript,mysql,mongodb,postgresql,git,github,vscode,azure,docker&perline=8"/>
+<img src="https://skillicons.dev/icons?i=html,css,js,ts,mongodb,git,docker,prisma,prometheus,postman,react,nestjs,java,mysql,postgresql,github,vscode,azure,grafana,idea,linux,nodejs,npm,powershell,pycharm,py,spring,ubuntu&perline=8"/>
 
 </div>
 
