@@ -72,7 +72,7 @@ stack: {
     ide_and_testing: ["VS Code", "IntelliJ IDEA", "PyCharm", "Postman"]
  },
 
- passion: "Building experiences 🚀"
+ passion: "Building experiences"
 
 }
 ```
