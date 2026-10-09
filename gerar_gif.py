@@ -305,7 +305,8 @@ def add_frame(frames: list[Image.Image], durations: list[int], base: Image.Image
         cursor_x = draw_line(draw, TEXT_X, y, active, font, count)
         if cursor:
             draw.text((cursor_x + 1, y), CURSOR, font=font, fill=PROMPT)
-    frames.append(frame)
+    # Force true monochrome output: every pixel has equal R, G, and B channels.
+    frames.append(frame.convert("L").convert("RGB"))
     durations.append(duration)
 
 def generate() -> None:
