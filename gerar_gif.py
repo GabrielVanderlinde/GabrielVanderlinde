@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Generate the animated terminal profile GIF. Install with: python -m pip install Pillow."""
-# Rebuild trigger: keep this generator as the single source of truth for the profile animation.
+"""Generate a detailed ASCII portrait and animated terminal profile GIF."""
 from __future__ import annotations
+import base64
+import gzip
 import shutil
 import subprocess
 import tempfile
@@ -9,40 +10,61 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent
-ART = ROOT / "assets/portrait.txt"
+ART = ROOT / "assets/portrait_ascii.gz.b64"
 OUT = ROOT / "assets/terminal_profile.gif"
 W, H = 900, 426
 BG, BORDER = (22, 25, 31), (57, 64, 77)
-PROMPT, LABEL, VALUE = (201, 209, 217), (242, 141, 53), (141, 231, 241)
+PROMPT, LABEL, VALUE, TEXT = (201, 209, 217), (242, 141, 53), (141, 231, 241), (220, 226, 233)
 CURSOR = "_"
-STEP, TYPE_MS, BLINKS = 2, 45, 2
-CURSOR_MS, LANGUAGE_PAUSE_MS = 100, 1200
+TYPE_STEP, TYPE_MS, BLINKS = 2, 55, 2
+CURSOR_MS, PAGE_PAUSE_MS = 100, 1500
 RAMP = " .,:;irsXA253hMHGS#9B&@"
+PORTRAIT_X, PORTRAIT_Y, PORTRAIT_ROW_STEP = 14, 12, 2.85
+TEXT_X, TEXT_Y, TEXT_SIZE, LINE_HEIGHT = 430, 62, 9, 17
 FONT_PATHS = (
     "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
     "/usr/share/fonts/truetype/liberation2/LiberationMono-Regular.ttf",
     "/System/Library/Fonts/Menlo.ttc",
     "C:/Windows/Fonts/consola.ttf",
 )
-LANGS = [
-    ("EN", "English", [
-        "Name: ........... Gabriel Vanderlinde", "Role: ........... Software Developer",
-        "Location: ....... Blumenau, SC, Brazil", "Focus: .......... Backend APIs & scalable systems",
-        "Stack: .......... Java, Spring Boot, TypeScript, NestJS", "Tools: .......... SQL, Docker, Linux, Git",
-        "Interests: ...... Quality, observability & architecture", "", "CONTACT",
-        "GitHub: ......... GabrielVanderlinde", "LinkedIn: ....... linkedin.com/in/gabrielhenriquevanderlinde"]),
-    ("PT", "Português", [
-        "Nome: ........... Gabriel Vanderlinde", "Atuação: ........ Desenvolvimento de Software",
-        "Localização: .... Blumenau, SC, Brasil", "Foco: ........... APIs e sistemas escaláveis",
-        "Stack: .......... Java, Spring Boot, TypeScript, NestJS", "Ferramentas: .... SQL, Docker, Linux, Git",
-        "Interesses: ..... Qualidade, observabilidade e arquitetura", "", "CONTATO",
-        "GitHub: ......... GabrielVanderlinde", "LinkedIn: ....... linkedin.com/in/gabrielhenriquevanderlinde"]),
-    ("ES", "Español", [
-        "Nombre: ........ Gabriel Vanderlinde", "Rol: ............ Desarrollador de Software",
-        "Ubicación: ..... Blumenau, SC, Brasil", "Enfoque: ....... APIs y sistemas escalables",
-        "Stack: ......... Java, Spring Boot, TypeScript, NestJS", "Herramientas: .. SQL, Docker, Linux, Git",
-        "Intereses: ..... Calidad, observabilidad y arquitectura", "", "CONTACTO",
-        "GitHub: ........ GabrielVanderlinde", "LinkedIn: ...... linkedin.com/in/gabrielhenriquevanderlinde"]),
+SCREENS = [
+    ("PROFILE", [
+        "Name: ........... Gabriel Vanderlinde",
+        "Role: ........... Software Developer",
+        "Location: ....... Blumenau, SC, Brazil",
+        "Focus: .......... Backend engineering and REST APIs",
+        "Stack: .......... Java, Spring Boot, TypeScript, NestJS",
+        "Interests: ...... Architecture, code quality, observability",
+        "Status: ......... Always learning, always building",
+    ]),
+    ("TECH STACK", [
+        "Frontend: HTML, CSS, JavaScript, TypeScript, React",
+        "Backend: Node.js, NestJS, Java, Spring Boot, Python",
+        "Database/ORM: MySQL, PostgreSQL, MongoDB, Prisma",
+        "Cloud/Containers: Azure, Docker, Podman",
+        "Observability: Prometheus, Grafana, Loki, Tempo",
+        "IDE/Testing: VS Code, IntelliJ, PyCharm, Postman, Playwright",
+        "Tools/OS: Git, GitHub, npm, Linux, Ubuntu, PowerShell",
+        "Quality: Clean code, tests, maintainability",
+    ]),
+    ("FEATURED PROJECTS", [
+        "Tasks Management: NestJS, TypeScript, Prisma",
+        "Travel Management: Java, Spring Boot, JPA, MySQL",
+        "Vollmed API: Medical clinic management backend",
+        "Rios Alerta: River information and monitoring web project",
+        "Gerenciador de Tarefas v2: Java",
+        "More projects: APIs, experiments, learning projects",
+    ]),
+    ("CURRENT MISSION", [
+        "Backend: Reliable, well-structured REST APIs",
+        "Software Quality: Clean code, testing, maintainability",
+        "Data: Relational and NoSQL databases",
+        "DevOps: Containers, metrics, logs, monitoring",
+        "Focus: Practice, build projects, improve continuously",
+        "GitHub: github.com/GabrielVanderlinde",
+        "LinkedIn: linkedin.com/in/gabrielhenriquevanderlinde",
+        "Open to collaboration and tech conversations",
+    ]),
 ]
 
 def load_font(size: int) -> ImageFont.ImageFont:
@@ -50,126 +72,111 @@ def load_font(size: int) -> ImageFont.ImageFont:
         try:
             return ImageFont.truetype(path, size)
         except OSError:
-            continue
+            pass
     return ImageFont.load_default()
 
-def make_palette() -> Image.Image:
-    fixed = [BG, BORDER, PROMPT, LABEL, VALUE, (224, 228, 234), (8, 10, 14)]
-    colors = [component for color in fixed for component in color]
-    for i in range(256 - len(fixed)):
-        shade = int(i * 255 / max(1, 255 - len(fixed)))
-        colors.extend((shade, shade, shade))
-    palette = Image.new("P", (1, 1))
-    palette.putpalette((colors + [0] * 768)[:768])
-    return palette
-
-PALETTE = make_palette()
-
-def make_base() -> Image.Image:
+def load_ascii_portrait() -> list[str]:
     if not ART.exists():
-        raise SystemExit(f"Portrait character map not found: {ART}")
+        raise SystemExit(f"ASCII portrait map not found: {ART}")
+    try:
+        encoded = ART.read_text(encoding="ascii").strip()
+        raw = gzip.decompress(base64.b64decode(encoded, validate=True))
+        lines = raw.decode("utf-8").splitlines()
+    except (ValueError, OSError, gzip.BadGzipFile, UnicodeError) as exc:
+        raise SystemExit(f"Cannot decode portrait map: {exc}") from exc
+    if not lines or not any(any(c != " " for c in line) for line in lines):
+        raise SystemExit("ASCII portrait map is empty")
+    return lines
+
+def make_base(art: list[str]) -> Image.Image:
     image = Image.new("RGB", (W, H), BG)
     draw = ImageDraw.Draw(image)
-    for y in range(H):
-        shade = max(0, 5 - int(abs(y - H / 2) / (H / 2) * 5))
-        draw.line((0, y, W, y), fill=(BG[0] + shade, BG[1] + shade, BG[2] + shade))
-    draw.rounded_rectangle((12, 19, W - 13, H - 19), radius=10, outline=BORDER, width=1)
-    mono = load_font(4)
-    cell_w = draw.textlength("M", font=mono)
-    y = 42
-    for row in ART.read_text(encoding="utf-8").splitlines():
-        for column, char in enumerate(row):
+    draw.rounded_rectangle((12, 9, W - 13, H - 9), radius=10, outline=BORDER, width=1)
+    portrait_font = load_font(3)
+    cell_w = draw.textlength("M", font=portrait_font)
+    # Draw characters sampled from the user's supplied transparent portrait.
+    # The map uses a denser grid to preserve eyes, teeth, hair and face contours.
+    for row, line in enumerate(art):
+        for column, char in enumerate(line):
             if char == " ":
                 continue
-            level = max(0, RAMP.find(char))
-            shade = int(20 + level / (len(RAMP) - 1) * 235)
-            draw.text((24 + column * cell_w, y), char, font=mono, fill=(shade, shade, shade))
-        y += 5
+            level = max(1, RAMP.find(char))
+            shade = int(45 + level / (len(RAMP) - 1) * 210)
+            draw.text(
+                (PORTRAIT_X + column * cell_w, PORTRAIT_Y + row * PORTRAIT_ROW_STEP),
+                char, font=portrait_font, fill=(shade, shade, shade),
+            )
     return image
 
-def draw_profile_line(draw: ImageDraw.ImageDraw, x: int, y: int, text: str,
-                      face: ImageFont.ImageFont, count: int | None = None) -> float:
+def draw_line(draw: ImageDraw.ImageDraw, x: int, y: int, text: str,
+              font: ImageFont.ImageFont, count: int | None = None) -> float:
     shown = text if count is None else text[:count]
-    draw.text((x, y), "$ ", font=face, fill=PROMPT)
-    px = x + draw.textlength("$ ", font=face)
+    draw.text((x, y), "$ ", font=font, fill=PROMPT)
+    cursor_x = x + draw.textlength("$ ", font=font)
     if ":" in shown:
         label, value = shown.split(":", 1)
         label += ":"
-        draw.text((px, y), label, font=face, fill=LABEL)
-        px += draw.textlength(label, font=face)
+        draw.text((cursor_x, y), label, font=font, fill=LABEL)
+        cursor_x += draw.textlength(label, font=font)
         if value:
-            draw.text((px, y), value, font=face, fill=VALUE)
-            px += draw.textlength(value, font=face)
+            draw.text((cursor_x, y), value, font=font, fill=VALUE)
+            cursor_x += draw.textlength(value, font=font)
     else:
-        draw.text((px, y), shown, font=face, fill=VALUE)
-        px += draw.textlength(shown, font=face)
-    return px
-
-def draw_rows(draw: ImageDraw.ImageDraw, rows: list[tuple[str, str]],
-              face: ImageFont.ImageFont, x: int, y: int, line_h: int) -> int:
-    for kind, text in rows:
-        if kind == "language":
-            draw.text((x, y), "$ ", font=face, fill=PROMPT)
-            draw.text((x + draw.textlength("$ ", font=face), y), text, font=face, fill=PROMPT)
-        else:
-            draw_profile_line(draw, x, y, text, face)
-        y += line_h
-    return y
+        draw.text((cursor_x, y), shown, font=font, fill=TEXT)
+        cursor_x += draw.textlength(shown, font=font)
+    return cursor_x
 
 def add_frame(frames: list[Image.Image], durations: list[int], base: Image.Image,
-              rows: list[tuple[str, str]], active: tuple[str, str] | None = None,
-              count: int | None = None, cursor: bool = False, duration: int = TYPE_MS) -> None:
+              rows: list[str], active: str | None = None, count: int | None = None,
+              cursor: bool = False, duration: int = TYPE_MS) -> None:
     frame = base.copy()
     draw = ImageDraw.Draw(frame)
-    face = load_font(10)
-    x, y = 285, 98
-    y = draw_rows(draw, rows, face, x, y, 19)
+    font = load_font(TEXT_SIZE)
+    y = TEXT_Y
+    for row in rows:
+        draw_line(draw, TEXT_X, y, row, font)
+        y += LINE_HEIGHT
     if active is not None:
-        kind, text = active
-        if kind == "language":
-            draw.text((x, y), "$ ", font=face, fill=PROMPT)
-            px = x + draw.textlength("$ ", font=face)
-            shown = text if count is None else text[:count]
-            draw.text((px, y), shown, font=face, fill=PROMPT)
-            px += draw.textlength(shown, font=face)
-        else:
-            px = draw_profile_line(draw, x, y, text, face, count)
+        cursor_x = draw_line(draw, TEXT_X, y, active, font, count)
         if cursor:
-            draw.text((px + 1, y), CURSOR, font=face, fill=PROMPT)
-    frames.append(frame.quantize(palette=PALETTE, dither=Image.Dither.NONE))
+            draw.text((cursor_x + 1, y), CURSOR, font=font, fill=PROMPT)
+    frames.append(frame)
     durations.append(duration)
 
 def generate() -> None:
-    base = make_base()
+    art = load_ascii_portrait()
+    base = make_base(art)
     frames: list[Image.Image] = []
     durations: list[int] = []
-    for code, language, lines in LANGS:
-        rows: list[tuple[str, str]] = []
-        title = f"[{code}] {language}"
+    total = len(SCREENS)
+    for screen_number, (section, lines) in enumerate(SCREENS, start=1):
+        header = f"[{screen_number:02d}/{total:02d}] {section}"
+        rows: list[str] = []
         for _ in range(BLINKS):
-            add_frame(frames, durations, base, rows, ("language", title), 0, True, CURSOR_MS)
-            add_frame(frames, durations, base, rows, ("language", title), 0, False, CURSOR_MS)
-        for index in range(0, len(title) + STEP, STEP):
-            add_frame(frames, durations, base, rows, ("language", title), min(index, len(title)),
-                      index < len(title))
-        rows.append(("language", title))
+            add_frame(frames, durations, base, rows, header, 0, True, CURSOR_MS)
+            add_frame(frames, durations, base, rows, header, 0, False, CURSOR_MS)
+        for index in range(0, len(header) + TYPE_STEP, TYPE_STEP):
+            count = min(index, len(header))
+            add_frame(frames, durations, base, rows, header, count, count < len(header))
+        rows.append(header)
         for line in lines:
             for _ in range(BLINKS):
-                add_frame(frames, durations, base, rows, ("line", line), 0, True, CURSOR_MS)
-                add_frame(frames, durations, base, rows, ("line", line), 0, False, CURSOR_MS)
-            for index in range(0, len(line) + STEP, STEP):
-                add_frame(frames, durations, base, rows, ("line", line), min(index, len(line)),
-                          index < len(line))
-            rows.append(("line", line))
+                add_frame(frames, durations, base, rows, line, 0, True, CURSOR_MS)
+                add_frame(frames, durations, base, rows, line, 0, False, CURSOR_MS)
+            for index in range(0, len(line) + TYPE_STEP, TYPE_STEP):
+                count = min(index, len(line))
+                add_frame(frames, durations, base, rows, line, count, count < len(line))
+            rows.append(line)
+        add_frame(frames, durations, base, rows, "$ clear", len("$ clear"), False, PAGE_PAUSE_MS)
         frames.append(frames[-1].copy())
-        durations.append(LANGUAGE_PAUSE_MS)
+        durations.append(PAGE_PAUSE_MS)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     frames[0].save(OUT, save_all=True, append_images=frames[1:], duration=durations,
                    loop=0, optimize=True, disposal=1)
     gifsicle = shutil.which("gifsicle")
     if gifsicle:
-        with tempfile.NamedTemporaryFile(suffix=".gif", dir=OUT.parent, delete=False) as temporary:
-            temp_path = Path(temporary.name)
+        with tempfile.NamedTemporaryFile(suffix=".gif", dir=OUT.parent, delete=False) as temp:
+            temp_path = Path(temp.name)
         try:
             subprocess.run([gifsicle, "-O3", str(OUT), "-o", str(temp_path)],
                            check=True, capture_output=True)
@@ -179,7 +186,11 @@ def generate() -> None:
                 temp_path.unlink(missing_ok=True)
         except (OSError, subprocess.CalledProcessError):
             temp_path.unlink(missing_ok=True)
-    print(f"GIF created: {OUT.relative_to(ROOT)} — {W}x{H}, {len(frames)} frames, {OUT.stat().st_size:,} bytes")
+    with Image.open(OUT) as gif:
+        assert gif.size == (W, H), f"Unexpected GIF dimensions: {gif.size}"
+        assert gif.n_frames > 100, f"Animation has too few frames: {gif.n_frames}"
+        assert gif.info.get("loop", 0) == 0, "GIF should loop infinitely"
+        print(f"GIF generated: {OUT.relative_to(ROOT)} — {W}x{H}, {gif.n_frames} frames, {OUT.stat().st_size:,} bytes")
 
 if __name__ == "__main__":
     generate()
