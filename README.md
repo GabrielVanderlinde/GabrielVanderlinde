@@ -9,44 +9,48 @@
 
 ---
 
-## About Me
+## About
 
-Full Stack Developer with expertise in building robust backend systems and modern frontend applications. Currently focused on professional development in Java/Spring Boot and Node.js/NestJS, while pursuing continuous learning in cloud technologies and software architecture.
+Full Stack Developer with expertise in building robust backend systems and modern frontend applications. Currently focused on professional development in Java/Spring Boot and Node.js/NestJS ecosystems.
 
 - Based in Blumenau, Brazil
-- Full Stack Developer specializing in backend systems
-- Strong foundation in Java Spring Boot and TypeScript/NestJS
-- Experience with RESTful APIs, databases, and cloud infrastructure
-- Continuous learner and open source contributor
+- Specializing in backend systems and REST APIs
+- Strong foundation in Java, Spring Boot, and TypeScript/NestJS
+- Experience with cloud infrastructure and containerization
+- Continuous learner pursuing excellence in software architecture
 
 ---
 
 ## Technical Skills
 
-### Backend
-- **Java**: Spring Boot, JPA/Hibernate, REST APIs
-- **Node.js**: NestJS, Express, TypeScript
-- **Databases**: MySQL, PostgreSQL, MongoDB, TimescaleDB
-- **Tools**: Docker, Maven, Gradle, Git
+### Backend Development
+- Java (Spring Boot, JPA/Hibernate, REST APIs)
+- Node.js (NestJS, Express, TypeScript)
+- Database design and optimization
+- API architecture and design patterns
 
-### Frontend
-- **Languages**: HTML, CSS, JavaScript, TypeScript
-- **Frameworks**: React
-- **Tools**: npm, VS Code
-
-### DevOps & Tools
-- **Containerization**: Docker, Podman
-- **Cloud**: Azure
-- **Monitoring**: Prometheus, Grafana, Loki, Tempo
-- **Version Control**: Git, GitHub
-- **IDE**: VS Code, IntelliJ IDEA
-- **Testing**: Postman, JUnit
-- **Environments**: Linux, Ubuntu, PowerShell
-
-### Databases & ORM
-- MySQL, PostgreSQL, MongoDB
+### Databases & Persistence
+- MySQL, PostgreSQL, MongoDB, TimescaleDB
 - JPA/Hibernate, Prisma ORM
-- Flyway migrations
+- Database migrations with Flyway
+
+### DevOps & Infrastructure
+- Docker, Podman containerization
+- Azure cloud platform
+- Git and GitHub version control
+- CI/CD considerations
+
+### Frontend Technologies
+- HTML, CSS, JavaScript, TypeScript
+- React fundamentals
+- Responsive design
+
+### Tools & Environments
+- Linux/Ubuntu/PowerShell
+- VS Code, IntelliJ IDEA
+- Maven, Gradle, npm
+- Postman for API testing
+- Prometheus, Grafana, Loki for monitoring
 
 ---
 
@@ -54,43 +58,60 @@ Full Stack Developer with expertise in building robust backend systems and moder
 
 ### Production-Ready APIs
 
-**[Travel Management API](https://github.com/GabrielVanderlinde/travel-management)**
-- RESTful API for travel management with CRUD operations
-- Tech: Java 21, Spring Boot, MySQL
-- Full persistence layer and data validation
-
 **[Vollmed API](https://github.com/GabrielVanderlinde/vollmed-api)**
-- Professional Spring Boot REST API
-- Tech: Java, Spring Boot 4, JPA/Hibernate, Flyway, MySQL
-- Database migrations and data validation
+- Professional medical clinic management REST API
+- Tech: Java 21, Spring Boot 4, JPA/Hibernate, MySQL, Flyway
+- Complete CRUD operations for doctors and patients with validation
+- Pagination and sorting implementation
+- Database migration management
 
-**[Tasks Management](https://github.com/GabrielVanderlinde/tasks-management)**
-- Task management system with clean architecture
+**[Travel Management API](https://github.com/GabrielVanderlinde/travel-management)**
+- RESTful travel management system with complete CRUD operations
+- Tech: Java 21, Spring Boot, MySQL
+- Full persistence layer with data validation
+- Professional error handling
+
+**[Tasks Management System](https://github.com/GabrielVanderlinde/tasks-management)**
+- Task management application with clean architecture principles
 - Tech: TypeScript, NestJS, Prisma ORM
-- Study of professional NestJS patterns
+- Study of professional NestJS architectural patterns
+- Modular and scalable design
 
-### Academic Projects
+### Academic & Learning Projects
 
 **[SENAI Clinica API](https://github.com/GabrielVanderlinde/senai-clinica-api)**
-- Clinical management system
+- Clinical management system developed as course project
 - Tech: Java, Spring Boot
-- Course project for systems development
+- Practical application of systems development concepts
 
-### Learning & Training
+**[Ninja Registration API](https://github.com/GabrielVanderlinde/cadastro-ninjas)** (Private)
+- Spring Boot REST API for learning purposes
 
-- [Formação Backend Java](https://github.com/GabrielVanderlinde/formacao-backend-java) - Java backend training
-- [Formação Node.js Alura](https://github.com/GabrielVanderlinde/formacao-nodejs-alura) - Node.js backend specialization
-- [Formação Frontend](https://github.com/GabrielVanderlinde/formacao-frontend) - Frontend development fundamentals
+**[EPI Management System](https://github.com/GabrielVanderlinde/gerenciamento-epi)**
+- Java 17 Spring Boot CLI application for EPI management and loan control
+- MySQL persistence layer
+
+### Learning Tracks
+
+- [Backend Java Formation](https://github.com/GabrielVanderlinde/formacao-backend-java) - Comprehensive Java backend development
+- [Node.js Formation (Alura)](https://github.com/GabrielVanderlinde/formacao-nodejs-alura) - Full Node.js backend specialization
+- [Frontend Formation](https://github.com/GabrielVanderlinde/formacao-frontend) - Web frontend fundamentals
+
+### Utilities
+
+**[VSCode Dotfiles](https://github.com/GabrielVanderlinde/vscode-dotfiles)**
+- VS Code configuration and settings repository
+- Personalized development environment setup
 
 ---
 
-## Current Focus
+## Current Goals
 
-- Advancing backend architecture and design patterns
-- Deepening Java/Spring Boot expertise
-- Building scalable APIs with TypeScript/NestJS
-- Learning cloud-native development and Kubernetes
-- Contributing to best practices in software development
+- Advancing software architecture and design patterns
+- Deepening expertise in Java/Spring Boot ecosystem
+- Building scalable and maintainable TypeScript/NestJS applications
+- Learning cloud-native development and containerization best practices
+- Contributing to well-engineered, production-quality code
 
 ---
 
