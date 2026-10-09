@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """Generate a detailed ASCII portrait and animated terminal profile GIF."""
 from __future__ import annotations
-import base64
-import gzip
 import html
 import json
 import os
@@ -16,7 +14,7 @@ from urllib.request import Request, urlopen
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent
-ART = ROOT / "assets/portrait_ascii.gz.b64"
+ART = ROOT / "assets/portrait.txt"
 OUT = ROOT / "assets/terminal_profile.gif"
 USER = "GabrielVanderlinde"
 W, H = 1100, 560
@@ -137,16 +135,17 @@ def load_font(size: int) -> ImageFont.ImageFont:
     return ImageFont.load_default()
 
 def load_ascii_portrait() -> list[str]:
+    """Load the human-readable character map derived from the supplied portrait."""
     if not ART.exists():
-        raise SystemExit(f"ASCII portrait map not found: {ART}")
-    try:
-        encoded = ART.read_text(encoding="ascii").strip()
-        raw = gzip.decompress(base64.b64decode(encoded, validate=True))
-        lines = raw.decode("utf-8").splitlines()
-    except (ValueError, OSError, gzip.BadGzipFile, UnicodeError) as exc:
-        raise SystemExit(f"Cannot decode portrait map: {exc}") from exc
-    if len(lines) != 100 or max((len(line) for line in lines), default=0) < 150:
-        raise SystemExit(f"Unexpected portrait map dimensions: {len(lines)} rows")
+        raise SystemExit(f"Portrait character map not found: {ART}")
+    lines = ART.read_text(encoding="utf-8").splitlines()
+    while lines and not lines[-1].strip():
+        lines.pop()
+    max_columns = max((len(line) for line in lines), default=0)
+    if len(lines) != 100 or max_columns < 150:
+        raise SystemExit(
+            f"Unexpected portrait map dimensions: {len(lines)} rows, {max_columns} columns"
+        )
     invalid = set("".join(lines)) - set(RAMP)
     if invalid:
         raise SystemExit(f"Portrait map has unsupported characters: {''.join(sorted(invalid))}")
