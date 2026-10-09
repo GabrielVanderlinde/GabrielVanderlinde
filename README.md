@@ -1,9 +1,7 @@
 <!-- Terminal-style animated profile -->
 <div align="center">
 
-<img width="100%" src="./assets/mountain-header.svg" alt="Gabriel Vanderlinde — green mountain banner"/>
-
-<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=20&duration=2600&pause=700&color=34D399&center=true&vCenter=true&width=800&lines=SYSTEM+ONLINE;JAVA+%7C+SPRING+BOOT+%7C+NESTJS;BACKEND+%7C+APIs+%7C+DATABASES;BUILDING+USEFUL+SOFTWARE;ALWAYS+LEARNING%2C+ALWAYS+BUILDING" alt="Typing animation"/>
+<img width="100%" src="./assets/terminal_profile.gif" alt="Animated terminal profile — Gabriel Vanderlinde"/>
 
 <p>
   <a href="https://github.com/GabrielVanderlinde"><img src="https://img.shields.io/badge/GitHub-View%20Profile-07130F?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/></a>
@@ -247,13 +245,17 @@ I'm open to learning, collaboration, and conversations about software developmen
 
 ---
 
-## Regenerate the terminal animation
+## Animated terminal profile
 
-The animated terminal profile is generated locally with Python and Pillow.
+The top banner is a looping terminal animation inspired by the [Terminal Profile GIF project](https://github.com/Magno-Rodrigues/terminal-profile-gif), customized with my profile details and portrait.
 
-1. Save your portrait as `assets/perfil.png`.
-2. Install Pillow: `python -m pip install Pillow`.
-3. Run `python gerar_gif.py` from the repository root.
-4. Commit the generated `assets/terminal_profile.gif`.
+The GIF is generated with Python and Pillow from `gerar_gif.py`, `assets/portrait.txt`, and the monochrome portrait texture in `assets/portrait_texture.jpg.b64`.
 
-The GIF loops continuously and can be customized in `gerar_gif.py`.
+To regenerate it locally:
+
+```bash
+python -m pip install Pillow
+python gerar_gif.py
+```
+
+When the generator or portrait assets are changed on `main`, GitHub Actions regenerates and commits `assets/terminal_profile.gif`.
