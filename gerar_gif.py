@@ -180,7 +180,6 @@ def make_base(art: list[str]) -> Image.Image:
                 (PORTRAIT_X + column * cell_w, PORTRAIT_Y + row * PORTRAIT_ROW_STEP),
                 char, font=portrait_font, fill=(shade, shade, shade),
             )
-    draw.text((22, 402), "ASCII / PORTRAIT", font=load_font(6), fill=(88, 99, 111))
     return image
 def draw_line(draw: ImageDraw.ImageDraw, x: int, y: int, text: str,
               font: ImageFont.ImageFont, count: int | None = None) -> float:
@@ -275,7 +274,7 @@ def generate() -> None:
                 count = min(index, len(line))
                 add_frame(frames, durations, base, rows, line, count, count < len(line))
             rows.append(line)
-        add_frame(frames, durations, base, rows, "$ clear", len("$ clear"), False, PAGE_PAUSE_MS)
+        add_frame(frames, durations, base, rows, "clear", len("clear"), False, PAGE_PAUSE_MS)
         frames.append(frames[-1].copy())
         durations.append(PAGE_PAUSE_MS)
 
