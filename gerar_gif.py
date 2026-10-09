@@ -192,7 +192,7 @@ def write_portrait_svg(art: list[str]) -> None:
       <text x="30" y="{height-26}" font-family="monospace" font-size="10"
         fill="#36e88d" opacity=".7">ASCII / PORTRAIT</text>
     </svg>'''
-    (ROOT / "assets" / "readme_ascii_portrait.svg").write_text(svg + "\\n", encoding="utf-8")
+    (ROOT / "assets" / "readme_ascii_portrait.svg").write_text(svg + "\n", encoding="utf-8")
 
 
 def make_base() -> Image.Image:
