@@ -3,10 +3,15 @@
 from __future__ import annotations
 import base64
 import gzip
+import json
+import os
 import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+from collections import Counter
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent
@@ -16,11 +21,11 @@ W, H = 900, 426
 BG, BORDER = (22, 25, 31), (57, 64, 77)
 PROMPT, LABEL, VALUE, TEXT = (201, 209, 217), (242, 141, 53), (141, 231, 241), (220, 226, 233)
 CURSOR = "_"
-TYPE_STEP, TYPE_MS, BLINKS = 2, 55, 2
-CURSOR_MS, PAGE_PAUSE_MS = 100, 1500
+TYPE_STEP, TYPE_MS, BLINKS = 2, 34, 1
+CURSOR_MS, PAGE_PAUSE_MS = 90, 2200
 RAMP = " .,:;irsXA253hMHGS#9B&@"
-PORTRAIT_X, PORTRAIT_Y, PORTRAIT_ROW_STEP = 14, 12, 2.85
-TEXT_X, TEXT_Y, TEXT_SIZE, LINE_HEIGHT = 430, 62, 9, 17
+PORTRAIT_X, PORTRAIT_Y, PORTRAIT_ROW_STEP = 12, 36, 3.72
+TEXT_X, TEXT_Y, TEXT_SIZE, LINE_HEIGHT = 432, 65, 9, 17
 FONT_PATHS = (
     "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
     "/usr/share/fonts/truetype/liberation2/LiberationMono-Regular.ttf",
@@ -67,6 +72,60 @@ SCREENS = [
     ]),
 ]
 
+
+
+def get_live_stats() -> tuple[list[str], bool]:
+    """Fetch public GitHub profile/repository stats when the GIF is built."""
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "GabrielVanderlinde-terminal-profile-gif",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    token = os.getenv("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+
+    def fetch_json(url: str):
+        request = Request(url, headers=headers)
+        with urlopen(request, timeout=8) as response:
+            return json.loads(response.read().decode("utf-8"))
+
+    try:
+        profile = fetch_json(f"https://api.github.com/users/{USER}")
+        repositories = fetch_json(
+            f"https://api.github.com/users/{USER}/repos?per_page=100&sort=updated"
+        )
+        repositories = [
+            repo for repo in repositories
+            if not repo.get("fork")
+            and not repo.get("archived")
+            and repo.get("name", "").lower() != USER.lower()
+        ]
+        stars = sum(int(repo.get("stargazers_count") or 0) for repo in repositories)
+        languages = Counter(repo.get("language") for repo in repositories if repo.get("language"))
+        top_languages = " / ".join(name for name, _ in languages.most_common(4)) or "not reported yet"
+        latest = max(repositories, key=lambda repo: repo.get("pushed_at") or "", default=None)
+        latest_name = latest.get("name", "none yet") if latest else "none yet"
+        last_push = latest.get("pushed_at", "")[:10] if latest else ""
+        lines = [
+            f"Public repositories: {int(profile.get('public_repos') or 0)}",
+            f"Stars on owned projects: {stars}",
+            f"Top languages: {top_languages}",
+            f"Latest project: {latest_name}",
+        ]
+        if last_push:
+            lines.append(f"Last push date: {last_push}")
+        lines.append("Data source: live GitHub REST API snapshot")
+        return lines, True
+    except (HTTPError, URLError, TimeoutError, OSError, ValueError, KeyError, TypeError) as exc:
+        print(f"GitHub API unavailable during GIF build: {type(exc).__name__}: {exc}")
+        return [
+            "Live stats temporarily unavailable",
+            "The next scheduled build will retry the API",
+            "Profile: github.com/GabrielVanderlinde",
+        ], False
+
+
 def load_font(size: int) -> ImageFont.ImageFont:
     for path in FONT_PATHS:
         try:
@@ -84,30 +143,43 @@ def load_ascii_portrait() -> list[str]:
         lines = raw.decode("utf-8").splitlines()
     except (ValueError, OSError, gzip.BadGzipFile, UnicodeError) as exc:
         raise SystemExit(f"Cannot decode portrait map: {exc}") from exc
-    if not lines or not any(any(c != " " for c in line) for line in lines):
-        raise SystemExit("ASCII portrait map is empty")
+    if len(lines) != 100 or max((len(line) for line in lines), default=0) != 170:
+        raise SystemExit(f"Unexpected portrait map dimensions: {len(lines)} rows")
+    invalid = set("".join(lines)) - set(RAMP)
+    if invalid:
+        raise SystemExit(f"Portrait map has unsupported characters: {''.join(sorted(invalid))}")
     return lines
 
 def make_base(art: list[str]) -> Image.Image:
     image = Image.new("RGB", (W, H), BG)
     draw = ImageDraw.Draw(image)
     draw.rounded_rectangle((12, 9, W - 13, H - 9), radius=10, outline=BORDER, width=1)
-    portrait_font = load_font(3)
+    draw.line((420, 10, 420, H - 10), fill=(37, 44, 54), width=1)
+
+    # Terminal title bar, restrained macOS-style indicators, and separator.
+    for x, color in ((437, (255, 95, 86)), (451, (255, 189, 46)), (465, (39, 201, 63))):
+        draw.ellipse((x, 20, x + 7, 27), fill=color)
+    draw.text((482, 17), "gabriel@dev-profile: ~/portfolio", font=load_font(9), fill=(130, 143, 159))
+    draw.line((431, 43, 875, 43), fill=(37, 44, 54), width=1)
+
+    portrait_font = load_font(4)
     cell_w = draw.textlength("M", font=portrait_font)
-    # Draw characters sampled from the user's supplied transparent portrait.
-    # The map uses a denser grid to preserve eyes, teeth, hair and face contours.
+    ramp_max = len(RAMP) - 1
     for row, line in enumerate(art):
         for column, char in enumerate(line):
             if char == " ":
                 continue
-            level = max(1, RAMP.find(char))
-            shade = int(45 + level / (len(RAMP) - 1) * 210)
+            level = RAMP.find(char)
+            if level < 0:
+                continue
+            # Preserve the source's tonal structure while keeping shadows visible.
+            shade = int(80 + level / ramp_max * 175)
             draw.text(
                 (PORTRAIT_X + column * cell_w, PORTRAIT_Y + row * PORTRAIT_ROW_STEP),
                 char, font=portrait_font, fill=(shade, shade, shade),
             )
+    draw.text((22, 402), "ASCII / PORTRAIT", font=load_font(6), fill=(88, 99, 111))
     return image
-
 def draw_line(draw: ImageDraw.ImageDraw, x: int, y: int, text: str,
               font: ImageFont.ImageFont, count: int | None = None) -> float:
     shown = text if count is None else text[:count]
@@ -146,10 +218,32 @@ def add_frame(frames: list[Image.Image], durations: list[int], base: Image.Image
 def generate() -> None:
     art = load_ascii_portrait()
     base = make_base(art)
+    stats, stats_available = get_live_stats()
+    boot_lines = [
+        "[ OK ] terminal runtime initialized",
+        "[ OK ] high-detail ASCII portrait loaded",
+        "[ OK ] profile modules loaded",
+        "[ OK ] GitHub API connected" if stats_available else "[WARN] GitHub API unavailable; stats omitted",
+        "SYSTEM ONLINE — READY",
+    ]
+    screens = [
+        ("PROFILE", SCREENS[0][1]),
+        ("TECH STACK", SCREENS[1][1]),
+        ("FEATURED PROJECTS", SCREENS[2][1] + [
+            "GitHub: github.com/GabrielVanderlinde",
+        ]),
+        ("LIVE GITHUB STATS", stats),
+        ("CURRENT MISSION", SCREENS[3][1] + [
+            "STATUS: BUILDING THE FUTURE",
+            "LinkedIn: linkedin.com/in/gabrielhenriquevanderlinde",
+        ]),
+    ]
+    # Startup comes first and is typed like a real shell session.
+    screens.insert(0, ("SYSTEM BOOT", boot_lines))
     frames: list[Image.Image] = []
     durations: list[int] = []
-    total = len(SCREENS)
-    for screen_number, (section, lines) in enumerate(SCREENS, start=1):
+    total = len(screens)
+    for screen_number, (section, lines) in enumerate(screens, start=1):
         header = f"[{screen_number:02d}/{total:02d}] {section}"
         rows: list[str] = []
         for _ in range(BLINKS):
@@ -170,6 +264,7 @@ def generate() -> None:
         add_frame(frames, durations, base, rows, "$ clear", len("$ clear"), False, PAGE_PAUSE_MS)
         frames.append(frames[-1].copy())
         durations.append(PAGE_PAUSE_MS)
+
     OUT.parent.mkdir(parents=True, exist_ok=True)
     frames[0].save(OUT, save_all=True, append_images=frames[1:], duration=durations,
                    loop=0, optimize=True, disposal=1)
@@ -178,18 +273,20 @@ def generate() -> None:
         with tempfile.NamedTemporaryFile(suffix=".gif", dir=OUT.parent, delete=False) as temp:
             temp_path = Path(temp.name)
         try:
-            subprocess.run([gifsicle, "-O3", str(OUT), "-o", str(temp_path)],
+            subprocess.run([gifsicle, "-O3", "--careful", str(OUT), "-o", str(temp_path)],
                            check=True, capture_output=True)
             if temp_path.stat().st_size < OUT.stat().st_size:
                 temp_path.replace(OUT)
             else:
                 temp_path.unlink(missing_ok=True)
-        except (OSError, subprocess.CalledProcessError):
+        except (OSError, subprocess.CalledProcessError) as exc:
             temp_path.unlink(missing_ok=True)
+            print(f"GIF optimization skipped: {exc}")
+
     with Image.open(OUT) as gif:
         assert gif.size == (W, H), f"Unexpected GIF dimensions: {gif.size}"
-        assert gif.n_frames > 100, f"Animation has too few frames: {gif.n_frames}"
-        assert gif.info.get("loop", 0) == 0, "GIF should loop infinitely"
+        assert gif.n_frames > 300, f"Animation has too few frames: {gif.n_frames}"
+        assert gif.info.get("loop", 0) == 0, "GIF is not set to loop forever"
         print(f"GIF generated: {OUT.relative_to(ROOT)} — {W}x{H}, {gif.n_frames} frames, {OUT.stat().st_size:,} bytes")
 
 if __name__ == "__main__":
