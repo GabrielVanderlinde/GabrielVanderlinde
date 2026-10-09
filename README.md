@@ -249,7 +249,7 @@ I'm open to learning, collaboration, and conversations about software developmen
 
 The top banner is a looping terminal animation inspired by the [Terminal Profile GIF project](https://github.com/Magno-Rodrigues/terminal-profile-gif), customized with my profile details and portrait.
 
-The GIF is generated with Python and Pillow from `gerar_gif.py`, `assets/portrait.txt`, and the monochrome portrait texture in `assets/portrait_texture.jpg.b64`.
+The GIF is generated with Python and Pillow from `gerar_gif.py` and `assets/portrait.txt`. The portrait itself is rendered entirely from terminal characters.
 
 To regenerate it locally:
 
