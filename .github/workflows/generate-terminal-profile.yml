@@ -49,7 +49,7 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             cp "$generated_gif" assets/terminal_profile.gif
-            git add assets/terminal_profile.gif
+            git add assets/terminal_profile.gif assets/readme_ascii_portrait.svg
             if git diff --cached --quiet; then
               echo "GIF is already up to date."
               rm -f "$generated_gif"
