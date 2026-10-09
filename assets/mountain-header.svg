@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="380" viewBox="0 0 1200 380" role="img" aria-labelledby="title desc">
+<title id="title">Gabriel Vanderlinde — Software Developer</title>
+<desc id="desc">Dark emerald mountain range at night with a moon, forest silhouettes, and developer profile title.</desc>
+<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0.95" y2="1"><stop offset="0" stop-color="#020806"/><stop offset=".48" stop-color="#063c2c"/><stop offset="1" stop-color="#02110d"/></linearGradient>
+  <radialGradient id="glow"><stop offset="0" stop-color="#34d399" stop-opacity=".4"/><stop offset="1" stop-color="#10b981" stop-opacity="0"/></radialGradient>
+  <linearGradient id="snow" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d1fae5"/><stop offset=".45" stop-color="#6ee7b7"/><stop offset="1" stop-color="#064e3b"/></linearGradient>
+  <linearGradient id="text" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#ffffff"/><stop offset=".54" stop-color="#d1fae5"/><stop offset="1" stop-color="#34d399"/></linearGradient>
+  <filter id="soft"><feGaussianBlur stdDeviation="20"/></filter>
+  <pattern id="stars" width="97" height="61" patternUnits="userSpaceOnUse"><circle cx="8" cy="13" r="1" fill="#d1fae5" opacity=".7"/><circle cx="52" cy="37" r=".8" fill="#a7f3d0" opacity=".5"/><circle cx="81" cy="8" r=".7" fill="#fff" opacity=".65"/></pattern>
+</defs>
+<rect width="1200" height="380" fill="url(#sky)"/>
+<rect width="1200" height="250" fill="url(#stars)"/>
+<ellipse cx="610" cy="128" rx="370" ry="150" fill="url(#glow)"/>
+<circle cx="608" cy="100" r="49" fill="#a7f3d0" opacity=".18" filter="url(#soft)"/>
+<circle cx="608" cy="100" r="34" fill="#d1fae5" opacity=".9"/>
+<circle cx="624" cy="91" r="34" fill="#073b2c"/>
+<path d="M0 238 L76 151 125 193 202 119 267 190 328 143 398 203 480 105 532 166 609 44 680 149 739 107 806 183 872 128 938 185 1008 112 1080 180 1140 143 1200 204 1200 330 0 330Z" fill="#052b20"/>
+<path d="M0 258 L95 192 160 225 252 151 320 219 411 160 482 228 609 62 710 215 777 167 859 232 954 159 1030 219 1112 172 1200 234 1200 350 0 350Z" fill="#064432"/>
+<path d="M480 228 L609 62 710 215 659 190 627 137 607 161 586 130 556 186 529 177Z" fill="url(#snow)" opacity=".92"/>
+<path d="M609 62 L645 145 627 137 607 161 586 130 556 186 529 177Z" fill="#ecfdf5" opacity=".85"/>
+<path d="M0 276 L86 215 145 246 228 195 302 254 378 211 461 270 530 226 609 260 692 211 772 257 850 214 920 260 1003 204 1075 251 1142 215 1200 254 1200 380 0 380Z" fill="#03271d"/>
+<path d="M0 304 L48 271 79 299 116 250 151 300 193 270 224 311 267 262 301 307 345 276 381 317 424 271 464 313 505 279 548 320 590 276 631 315 674 273 716 319 757 278 800 313 842 269 885 315 927 273 969 312 1010 267 1054 313 1097 275 1141 310 1172 271 1200 297 1200 380 0 380Z" fill="#01160f"/>
+<g fill="#010e0a">
+<path d="M0 380V298l18 31 8-21 9 21 12-39 13 39 9-19 12 19v51z"/>
+<path d="M60 380v-66l13 24 8-19 9 19 12-31 13 31 8-15 11 15v42z"/>
+<path d="M1080 380v-61l13 22 8-17 10 17 12-31 12 31 9-15 10 15v39z"/>
+<path d="M1145 380v-76l14 26 9-20 10 20 11-36 11 36v50z"/>
+</g>
+<rect y="0" width="1200" height="380" fill="#00110c" opacity=".16"/>
+<text x="600" y="222" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="51" font-weight="800" letter-spacing="1.4" fill="url(#text)">GABRIEL VANDERLINDE</text>
+<text x="600" y="260" text-anchor="middle" font-family="monospace" font-size="18" letter-spacing="5" fill="#e5fff3">SOFTWARE DEVELOPER</text>
+<text x="600" y="294" text-anchor="middle" font-family="monospace" font-size="15" letter-spacing="2.4" fill="#34d399">NESTJS  |  JAVA  |  JAVASCRIPT  |  BACKEND APIs</text>
+<path d="M60 322H1140" stroke="#10b981" stroke-opacity=".45"/>
+<text x="60" y="346" font-family="monospace" font-size="12" letter-spacing="1.2" fill="#a7f3d0">$ DEVELOPER // SYSTEM ONLINE</text>
+<text x="1140" y="346" text-anchor="end" font-family="monospace" font-size="12" letter-spacing="1.2" fill="#a7f3d0">CODE / BUILD / IMPROVE / REPEAT</text>
+</svg>
