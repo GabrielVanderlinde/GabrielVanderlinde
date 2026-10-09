@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Generate a detailed ASCII portrait and animated terminal profile GIF."""
 from __future__ import annotations
-import html
 import json
 import os
 import shutil
@@ -17,15 +16,15 @@ ROOT = Path(__file__).resolve().parent
 ART = ROOT / "assets/portrait.txt"
 OUT = ROOT / "assets/terminal_profile.gif"
 USER = "GabrielVanderlinde"
-W, H = 1100, 560
-BG, BORDER = (22, 25, 31), (57, 64, 77)
-PROMPT, LABEL, VALUE, TEXT = (201, 209, 217), (242, 141, 53), (141, 231, 241), (220, 226, 233)
-GREEN = (105, 230, 158)
+W, H = 1500, 844
+BG, BORDER = (12, 13, 16), (68, 72, 80)
+PROMPT, LABEL, VALUE, TEXT = (238, 240, 243), (157, 163, 172), (219, 222, 227), (205, 209, 215)
+ACCENT = (226, 229, 233)
 CURSOR = "_"
 TYPE_STEP, TYPE_MS, BLINKS = 4, 45, 1
 CURSOR_MS, PAGE_PAUSE_MS = 70, 1600
 RAMP = " .,:;irsXA253hMHGS#9B&@"
-TEXT_X, TEXT_Y, TEXT_SIZE, LINE_HEIGHT = 34, 84, 12, 22
+TEXT_X, TEXT_Y, TEXT_SIZE, LINE_HEIGHT = 603, 132, 13, 28
 FONT_PATHS = (
     "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
     "/usr/share/fonts/truetype/liberation2/LiberationMono-Regular.ttf",
@@ -151,81 +150,82 @@ def load_ascii_portrait() -> list[str]:
         raise SystemExit(f"Portrait map has unsupported characters: {''.join(sorted(invalid))}")
     return lines
 
-def write_portrait_svg(art: list[str]) -> None:
-    """Render the supplied portrait map as a detailed standalone SVG for README."""
-    width, height = 1240, 800
-    rows = []
-    for index, line in enumerate(art):
-        y = 14 + index * 7.8
-        rows.append(
-            f'<text x="20" y="{y:.1f}">{html.escape(line, quote=False)}</text>'
-        )
-    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}"
-      viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">
-      <title id="title">Gabriel Vanderlinde — ASCII portrait</title>
-      <desc id="desc">A detailed portrait rendered with terminal characters on a dark background.</desc>
-      <defs>
-        <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#070b09"/>
-          <stop offset="100%" stop-color="#111a15"/>
-        </linearGradient>
-        <linearGradient id="ink" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#bfcfc5"/>
-          <stop offset="55%" stop-color="#f0f4f1"/>
-          <stop offset="100%" stop-color="#9fe8bd"/>
-        </linearGradient>
-        <pattern id="scanlines" width="4" height="6" patternUnits="userSpaceOnUse">
-          <path d="M0 5.5 H4" stroke="#6de6a0" stroke-opacity=".05" stroke-width=".5"/>
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" rx="18" fill="url(#background)"/>
-      <rect x="12" y="12" width="{width-24}" height="{height-24}" rx="14"
-        fill="none" stroke="#1a6e46" stroke-opacity=".65"/>
-      <path d="M26 54 V26 H54 M{width-54} 26 H{width-26} V54 M26 {height-54} V{height-26} H54 M{width-54} {height-26} H{width-26} V{height-54}"
-        stroke="#36e88d" stroke-width="1.5" fill="none" opacity=".8"/>
-      <g font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8"
-         letter-spacing="1.2" fill="url(#ink)" opacity=".96">
-        {''.join(rows)}
-      </g>
-      <rect width="100%" height="100%" rx="18" fill="url(#scanlines)"/>
-      <text x="30" y="{height-26}" font-family="monospace" font-size="10"
-        fill="#36e88d" opacity=".7">ASCII / PORTRAIT</text>
-    </svg>'''
-    (ROOT / "assets" / "readme_ascii_portrait.svg").write_text(svg + "\n", encoding="utf-8")
-
-
-def make_base() -> Image.Image:
-    """Build the terminal window; the standalone portrait lives above it in the README."""
+def make_base(art: list[str]) -> Image.Image:
+    """Compose the user's ASCII portrait and a monochrome terminal in one wide canvas."""
     image = Image.new("RGB", (W, H), BG)
     draw = ImageDraw.Draw(image)
-    draw.rounded_rectangle((12, 9, W - 13, H - 9), radius=14, outline=BORDER, width=1)
-    draw.rounded_rectangle((14, 11, W - 15, 61), radius=12, fill=(15, 22, 19))
-    draw.rectangle((14, 43, W - 15, 61), fill=(15, 22, 19))
-    for x, color in ((31, (255, 95, 86)), (48, (255, 189, 46)), (65, (39, 201, 63))):
-        draw.ellipse((x, 28, x + 8, 36), fill=color)
-    draw.text((88, 23), "gabriel@dev-profile: ~/portfolio — zsh", font=load_font(12), fill=(173, 190, 180))
-    draw.line((22, 62, W - 22, 62), fill=(37, 58, 46), width=1)
-    draw.line((628, 74, 628, H - 23), fill=(37, 58, 46), width=1)
 
-    # Sidebar: persistent system status and the key themes of this profile.
-    sx, sw = 653, W - 681
-    draw.rounded_rectangle((sx, 80, sx + sw, H - 24), radius=10,
-                           fill=(11, 17, 14), outline=(35, 82, 57), width=1)
-    small = load_font(10)
-    medium = load_font(12)
-    draw.text((sx + 18, 96), "SYSTEM OVERVIEW", font=small, fill=GREEN)
-    draw.line((sx + 18, 118, sx + sw - 18, 118), fill=(37, 58, 46), width=1)
-    draw.text((sx + 18, 134), "STATUS", font=small, fill=(123, 143, 130))
-    draw.text((sx + 18, 151), "ONLINE  ●", font=medium, fill=GREEN)
-    draw.text((sx + 18, 190), "CORE STACK", font=small, fill=(123, 143, 130))
-    draw.text((sx + 18, 210), "JAVA / SPRING", font=medium, fill=TEXT)
-    draw.text((sx + 18, 232), "TYPESCRIPT / NESTJS", font=medium, fill=TEXT)
-    draw.text((sx + 18, 270), "ENGINEERING FOCUS", font=small, fill=(123, 143, 130))
-    draw.text((sx + 18, 290), "APIs  •  TESTING", font=medium, fill=VALUE)
-    draw.text((sx + 18, 312), "OBSERVABILITY", font=medium, fill=VALUE)
-    draw.text((sx + 18, 350), "LOCATION", font=small, fill=(123, 143, 130))
-    draw.text((sx + 18, 370), "BLUMENAU, SC / BR", font=medium, fill=TEXT)
-    draw.text((sx + 18, H - 60), ">_  ALWAYS BUILDING", font=medium, fill=GREEN)
+    # One continuous frame; the portrait and terminal share the same visual system.
+    draw.rounded_rectangle((12, 10, W - 13, H - 10), radius=12, outline=BORDER, width=1)
+    draw.line((566, 22, 566, H - 22), fill=(45, 48, 54), width=1)
+
+    # Render the supplied portrait character map in neutral grayscale.
+    portrait_font = load_font(5)
+    cell_w = draw.textlength("M", font=portrait_font)
+    row_step = 7.3
+    portrait_x, portrait_y = 14, 54
+    ramp_max = len(RAMP) - 1
+    for row_index, line in enumerate(art):
+        y = portrait_y + row_index * row_step
+        for col_index, char in enumerate(line):
+            if char == " ":
+                continue
+            level = RAMP.find(char)
+            if level < 0:
+                continue
+            shade = int(62 + (level / ramp_max) * 187)
+            # Add a tiny amount of natural contrast without introducing a colored tint.
+            draw.text(
+                (portrait_x + col_index * cell_w, y),
+                char,
+                font=portrait_font,
+                fill=(shade, shade, shade),
+            )
+    draw.text((28, H - 42), "ASCII / PORTRAIT", font=load_font(10), fill=(105, 109, 117))
+
+    # Terminal frame and classic, entirely monochrome window controls.
+    tx, ty, tr, tb = 580, 34, W - 14, H - 22
+    draw.rounded_rectangle((tx, ty, tr, tb), radius=10, outline=(76, 80, 88), width=1)
+    draw.rounded_rectangle((tx + 2, ty + 2, tr - 2, ty + 56), radius=8, fill=(23, 25, 30))
+    draw.rectangle((tx + 2, ty + 34, tr - 2, ty + 56), fill=(23, 25, 30))
+    for x, shade in ((tx + 18, 150), (tx + 35, 185), (tx + 52, 220)):
+        draw.ellipse((x, ty + 19, x + 8, ty + 27), fill=(shade, shade, shade))
+    draw.text((tx + 72, ty + 14), "gabriel@vanderlinde: ~/portfolio — zsh",
+              font=load_font(13), fill=(207, 210, 216))
+    draw.line((tx + 14, ty + 57, tr - 14, ty + 57), fill=(59, 62, 69), width=1)
+
+    # Main console and persistent system overview panel.
+    divider_x = 1128
+    body_top = 109
+    draw.line((divider_x, body_top, divider_x, tb - 16), fill=(54, 57, 64), width=1)
+    sx, sw = 1145, tr - 1161
+    draw.rounded_rectangle((sx, body_top + 2, sx + sw, tb - 17), radius=8,
+                           fill=(18, 20, 24), outline=(61, 64, 71), width=1)
+    small = load_font(11)
+    medium = load_font(13)
+    muted = (139, 144, 153)
+    bright = (224, 227, 232)
+    draw.text((sx + 20, 130), "SYSTEM OVERVIEW", font=small, fill=bright)
+    draw.line((sx + 18, 153, sx + sw - 18, 153), fill=(56, 59, 66), width=1)
+    draw.text((sx + 20, 174), "STATUS", font=small, fill=muted)
+    draw.text((sx + 20, 194), "ONLINE  ●", font=medium, fill=bright)
+    draw.text((sx + 20, 239), "CORE STACK", font=small, fill=muted)
+    draw.text((sx + 20, 260), "JAVA / SPRING", font=medium, fill=bright)
+    draw.text((sx + 20, 284), "TYPESCRIPT / NESTJS", font=medium, fill=bright)
+    draw.text((sx + 20, 329), "ENGINEERING FOCUS", font=small, fill=muted)
+    draw.text((sx + 20, 350), "APIs  •  TESTING", font=medium, fill=bright)
+    draw.text((sx + 20, 374), "OBSERVABILITY", font=medium, fill=bright)
+    draw.text((sx + 20, 419), "LOCATION", font=small, fill=muted)
+    draw.text((sx + 20, 440), "BLUMENAU, SC / BR", font=medium, fill=bright)
+    draw.line((sx + 18, 482, sx + sw - 18, 482), fill=(56, 59, 66), width=1)
+    draw.text((sx + 20, 507), ">_ BUILDING THE FUTURE", font=medium, fill=bright)
+    draw.text((sx + 20, tb - 48), "CONTINUOUS LEARNING  /  ALWAYS BUILDING",
+              font=small, fill=muted)
+
+    # A footer makes the composition feel like a single composed interface.
+    draw.line((tx + 15, tb - 58, divider_x - 15, tb - 58), fill=(45, 48, 54), width=1)
+    draw.text((tx + 18, tb - 43), "PROFILE STREAM  •  UTF-8  •  LOOP: ON",
+              font=load_font(10), fill=(112, 117, 126))
     return image
 def draw_line(draw: ImageDraw.ImageDraw, x: int, y: int, text: str,
               font: ImageFont.ImageFont, count: int | None = None) -> float:
@@ -234,7 +234,7 @@ def draw_line(draw: ImageDraw.ImageDraw, x: int, y: int, text: str,
     cursor_x = x + draw.textlength("$ ", font=font)
     if shown.startswith("[ OK ]"):
         label, value = "[ OK ]", shown[6:]
-        draw.text((cursor_x, y), label, font=font, fill=GREEN)
+        draw.text((cursor_x, y), label, font=font, fill=ACCENT)
         cursor_x += draw.textlength(label, font=font)
         if value:
             draw.text((cursor_x, y), value, font=font, fill=TEXT)
@@ -277,8 +277,7 @@ def add_frame(frames: list[Image.Image], durations: list[int], base: Image.Image
 
 def generate() -> None:
     art = load_ascii_portrait()
-    write_portrait_svg(art)
-    base = make_base()
+    base = make_base(art)
     stats, stats_available = get_live_stats()
     boot_lines = [
         "[ OK ] terminal runtime initialized",
