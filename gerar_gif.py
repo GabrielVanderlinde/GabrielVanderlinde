@@ -17,6 +17,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parent
 ART = ROOT / "assets/portrait_ascii.gz.b64"
 OUT = ROOT / "assets/terminal_profile.gif"
+USER = "GabrielVanderlinde"
 W, H = 900, 426
 BG, BORDER = (22, 25, 31), (57, 64, 77)
 PROMPT, LABEL, VALUE, TEXT = (201, 209, 217), (242, 141, 53), (141, 231, 241), (220, 226, 233)
@@ -185,7 +186,20 @@ def draw_line(draw: ImageDraw.ImageDraw, x: int, y: int, text: str,
     shown = text if count is None else text[:count]
     draw.text((x, y), "$ ", font=font, fill=PROMPT)
     cursor_x = x + draw.textlength("$ ", font=font)
-    if ":" in shown:
+    if shown.startswith("[ OK ]"):
+        label, value = "[ OK ]", shown[6:]
+        draw.text((cursor_x, y), label, font=font, fill=GREEN)
+        cursor_x += draw.textlength(label, font=font)
+        if value:
+            draw.text((cursor_x, y), value, font=font, fill=TEXT)
+            cursor_x += draw.textlength(value, font=font)
+    elif shown.startswith("[WARN]"):
+        label, value = "[WARN]", shown[6:]
+        draw.text((cursor_x, y), label, font=font, fill=LABEL)
+        cursor_x += draw.textlength(label, font=font)
+        draw.text((cursor_x, y), value, font=font, fill=TEXT)
+        cursor_x += draw.textlength(value, font=font)
+    elif ":" in shown:
         label, value = shown.split(":", 1)
         label += ":"
         draw.text((cursor_x, y), label, font=font, fill=LABEL)
@@ -235,7 +249,6 @@ def generate() -> None:
         ("LIVE GITHUB STATS", stats),
         ("CURRENT MISSION", SCREENS[3][1] + [
             "STATUS: BUILDING THE FUTURE",
-            "LinkedIn: linkedin.com/in/gabrielhenriquevanderlinde",
         ]),
     ]
     # Startup comes first and is typed like a real shell session.
