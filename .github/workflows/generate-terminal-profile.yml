@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - "gerar_gif.py"
-      - "assets/portrait_ascii.gz.b64"
+      - "assets/portrait.txt"
       - ".github/workflows/generate-terminal-profile.yml"
   workflow_dispatch:
   schedule:
