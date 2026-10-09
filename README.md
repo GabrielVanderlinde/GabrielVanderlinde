@@ -40,15 +40,15 @@ Developer focused on building robust backend solutions and modern web applicatio
 ## Featured Projects
 
 ### API Projects
-- vollmed-api
-- travel-management
-- tasks-management
+- vollmed-api - Medical clinic management API
+- travel-management - Travel management API
+- tasks-management - Task management system
 
 ### Academic / Learning
-- senai-clinica-api
-- gerenciamento-epi
-- formacao-backend-java
-- formacao-nodejs-alura
+- senai-clinica-api - Clinical management project
+- gerenciamento-epi - EPI management and loan control
+- formacao-backend-java - Java backend training
+- formacao-nodejs-alura - Node.js training
 
 ## Current Focus
 
