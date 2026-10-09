@@ -3,6 +3,7 @@
 from __future__ import annotations
 import base64
 import gzip
+import html
 import json
 import os
 import shutil
@@ -18,7 +19,7 @@ ROOT = Path(__file__).resolve().parent
 ART = ROOT / "assets/portrait_ascii.gz.b64"
 OUT = ROOT / "assets/terminal_profile.gif"
 USER = "GabrielVanderlinde"
-W, H = 900, 426
+W, H = 1100, 560
 BG, BORDER = (22, 25, 31), (57, 64, 77)
 PROMPT, LABEL, VALUE, TEXT = (201, 209, 217), (242, 141, 53), (141, 231, 241), (220, 226, 233)
 GREEN = (105, 230, 158)
@@ -26,8 +27,7 @@ CURSOR = "_"
 TYPE_STEP, TYPE_MS, BLINKS = 2, 34, 1
 CURSOR_MS, PAGE_PAUSE_MS = 90, 2200
 RAMP = " .,:;irsXA253hMHGS#9B&@"
-PORTRAIT_X, PORTRAIT_Y, PORTRAIT_ROW_STEP = 12, 36, 3.72
-TEXT_X, TEXT_Y, TEXT_SIZE, LINE_HEIGHT = 432, 65, 9, 17
+TEXT_X, TEXT_Y, TEXT_SIZE, LINE_HEIGHT = 34, 84, 12, 22
 FONT_PATHS = (
     "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
     "/usr/share/fonts/truetype/liberation2/LiberationMono-Regular.ttf",
@@ -145,41 +145,88 @@ def load_ascii_portrait() -> list[str]:
         lines = raw.decode("utf-8").splitlines()
     except (ValueError, OSError, gzip.BadGzipFile, UnicodeError) as exc:
         raise SystemExit(f"Cannot decode portrait map: {exc}") from exc
-    if len(lines) != 100 or max((len(line) for line in lines), default=0) != 170:
+    if len(lines) != 100 or max((len(line) for line in lines), default=0) < 150:
         raise SystemExit(f"Unexpected portrait map dimensions: {len(lines)} rows")
     invalid = set("".join(lines)) - set(RAMP)
     if invalid:
         raise SystemExit(f"Portrait map has unsupported characters: {''.join(sorted(invalid))}")
     return lines
 
-def make_base(art: list[str]) -> Image.Image:
+def write_portrait_svg(art: list[str]) -> None:
+    """Render the supplied portrait map as a detailed standalone SVG for README."""
+    width, height = 1240, 800
+    rows = []
+    for index, line in enumerate(art):
+        y = 14 + index * 7.8
+        rows.append(
+            f'<text x="20" y="{y:.1f}">{html.escape(line, quote=False)}</text>'
+        )
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}"
+      viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">
+      <title id="title">Gabriel Vanderlinde — ASCII portrait</title>
+      <desc id="desc">A detailed portrait rendered with terminal characters on a dark background.</desc>
+      <defs>
+        <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#070b09"/>
+          <stop offset="100%" stop-color="#111a15"/>
+        </linearGradient>
+        <linearGradient id="ink" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#bfcfc5"/>
+          <stop offset="55%" stop-color="#f0f4f1"/>
+          <stop offset="100%" stop-color="#9fe8bd"/>
+        </linearGradient>
+        <pattern id="scanlines" width="4" height="6" patternUnits="userSpaceOnUse">
+          <path d="M0 5.5 H4" stroke="#6de6a0" stroke-opacity=".05" stroke-width=".5"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" rx="18" fill="url(#background)"/>
+      <rect x="12" y="12" width="{width-24}" height="{height-24}" rx="14"
+        fill="none" stroke="#1a6e46" stroke-opacity=".65"/>
+      <path d="M26 54 V26 H54 M{width-54} 26 H{width-26} V54 M26 {height-54} V{height-26} H54 M{width-54} {height-26} H{width-26} V{height-54}"
+        stroke="#36e88d" stroke-width="1.5" fill="none" opacity=".8"/>
+      <g font-family="DejaVu Sans Mono, Liberation Mono, monospace" font-size="8"
+         letter-spacing="1.2" fill="url(#ink)" opacity=".96">
+        {''.join(rows)}
+      </g>
+      <rect width="100%" height="100%" rx="18" fill="url(#scanlines)"/>
+      <text x="30" y="{height-26}" font-family="monospace" font-size="10"
+        fill="#36e88d" opacity=".7">ASCII / PORTRAIT</text>
+    </svg>'''
+    (ROOT / "assets" / "readme_ascii_portrait.svg").write_text(svg + "\\n", encoding="utf-8")
+
+
+def make_base() -> Image.Image:
+    """Build the terminal window; the standalone portrait lives above it in the README."""
     image = Image.new("RGB", (W, H), BG)
     draw = ImageDraw.Draw(image)
-    draw.rounded_rectangle((12, 9, W - 13, H - 9), radius=10, outline=BORDER, width=1)
-    draw.line((420, 10, 420, H - 10), fill=(37, 44, 54), width=1)
+    draw.rounded_rectangle((12, 9, W - 13, H - 9), radius=14, outline=BORDER, width=1)
+    draw.rounded_rectangle((14, 11, W - 15, 61), radius=12, fill=(15, 22, 19))
+    draw.rectangle((14, 43, W - 15, 61), fill=(15, 22, 19))
+    for x, color in ((31, (255, 95, 86)), (48, (255, 189, 46)), (65, (39, 201, 63))):
+        draw.ellipse((x, 28, x + 8, 36), fill=color)
+    draw.text((88, 23), "gabriel@dev-profile: ~/portfolio — zsh", font=load_font(12), fill=(173, 190, 180))
+    draw.line((22, 62, W - 22, 62), fill=(37, 58, 46), width=1)
+    draw.line((628, 74, 628, H - 23), fill=(37, 58, 46), width=1)
 
-    # Terminal title bar, restrained macOS-style indicators, and separator.
-    for x, color in ((437, (255, 95, 86)), (451, (255, 189, 46)), (465, (39, 201, 63))):
-        draw.ellipse((x, 20, x + 7, 27), fill=color)
-    draw.text((482, 17), "gabriel@dev-profile: ~/portfolio", font=load_font(9), fill=(130, 143, 159))
-    draw.line((431, 43, 875, 43), fill=(37, 44, 54), width=1)
-
-    portrait_font = load_font(4)
-    cell_w = draw.textlength("M", font=portrait_font)
-    ramp_max = len(RAMP) - 1
-    for row, line in enumerate(art):
-        for column, char in enumerate(line):
-            if char == " ":
-                continue
-            level = RAMP.find(char)
-            if level < 0:
-                continue
-            # Preserve the source's tonal structure while keeping shadows visible.
-            shade = int(80 + level / ramp_max * 175)
-            draw.text(
-                (PORTRAIT_X + column * cell_w, PORTRAIT_Y + row * PORTRAIT_ROW_STEP),
-                char, font=portrait_font, fill=(shade, shade, shade),
-            )
+    # Sidebar: persistent system status and the key themes of this profile.
+    sx, sw = 653, W - 681
+    draw.rounded_rectangle((sx, 80, sx + sw, H - 24), radius=10,
+                           fill=(11, 17, 14), outline=(35, 82, 57), width=1)
+    small = load_font(10)
+    medium = load_font(12)
+    draw.text((sx + 18, 96), "SYSTEM OVERVIEW", font=small, fill=GREEN)
+    draw.line((sx + 18, 118, sx + sw - 18, 118), fill=(37, 58, 46), width=1)
+    draw.text((sx + 18, 134), "STATUS", font=small, fill=(123, 143, 130))
+    draw.text((sx + 18, 151), "ONLINE  ●", font=medium, fill=GREEN)
+    draw.text((sx + 18, 190), "CORE STACK", font=small, fill=(123, 143, 130))
+    draw.text((sx + 18, 210), "JAVA / SPRING", font=medium, fill=TEXT)
+    draw.text((sx + 18, 232), "TYPESCRIPT / NESTJS", font=medium, fill=TEXT)
+    draw.text((sx + 18, 270), "ENGINEERING FOCUS", font=small, fill=(123, 143, 130))
+    draw.text((sx + 18, 290), "APIs  •  TESTING", font=medium, fill=VALUE)
+    draw.text((sx + 18, 312), "OBSERVABILITY", font=medium, fill=VALUE)
+    draw.text((sx + 18, 350), "LOCATION", font=small, fill=(123, 143, 130))
+    draw.text((sx + 18, 370), "BLUMENAU, SC / BR", font=medium, fill=TEXT)
+    draw.text((sx + 18, H - 60), ">_  ALWAYS BUILDING", font=medium, fill=GREEN)
     return image
 def draw_line(draw: ImageDraw.ImageDraw, x: int, y: int, text: str,
               font: ImageFont.ImageFont, count: int | None = None) -> float:
@@ -231,7 +278,8 @@ def add_frame(frames: list[Image.Image], durations: list[int], base: Image.Image
 
 def generate() -> None:
     art = load_ascii_portrait()
-    base = make_base(art)
+    write_portrait_svg(art)
+    base = make_base()
     stats, stats_available = get_live_stats()
     boot_lines = [
         "[ OK ] terminal runtime initialized",
