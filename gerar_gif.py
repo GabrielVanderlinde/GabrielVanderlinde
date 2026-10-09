@@ -18,7 +18,7 @@ OUT = ROOT / "assets/terminal_profile.gif"
 USER = "GabrielVanderlinde"
 W, H = 1100, 1340
 # Tactical Green palette: charcoal, military green, olive, and soft gray.
-BG, BORDER = (17, 20, 17), (62, 74, 59)  # #111411 / muted green-gray
+BG, BORDER = (12, 12, 12), (68, 68, 68)  # Neutral grayscale outside the terminal
 PROMPT, LABEL, VALUE, TEXT = (86, 122, 70), (163, 177, 138), (210, 213, 206), (210, 213, 206)
 ACCENT = (163, 177, 138)  # #A3B18A
 CURSOR = "_"
@@ -159,7 +159,7 @@ def make_base(art: list[str]) -> Image.Image:
     # Subtle outer frame and charcoal-green scan lines keep the design restrained.
     draw.rounded_rectangle((12, 10, W - 13, H - 10), radius=13, outline=BORDER, width=1)
     for y in range(20, H - 18, 5):
-        draw.line((20, y, W - 20, y), fill=(21, 25, 21), width=1)
+        draw.line((20, y, W - 20, y), fill=(15, 15, 15), width=1)
 
     # Portrait section: render the supplied high-detail character map centered above the terminal.
     portrait_font = load_font(5)
@@ -188,7 +188,7 @@ def make_base(art: list[str]) -> Image.Image:
             )
 
     draw.text((28, 598), "ASCII PORTRAIT  /  GRAYSCALE RENDER", font=load_font(9), fill=(112, 116, 124))
-    draw.line((24, 633, W - 24, 633), fill=(52, 61, 49), width=1)
+    draw.line((24, 633, W - 24, 633), fill=(51, 51, 51), width=1)
 
     # Terminal sits beneath the portrait in its own window frame.
     tx, ty, tr, tb = 28, 657, W - 28, H - 22
