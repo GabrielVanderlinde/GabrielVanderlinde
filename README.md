@@ -1,8 +1,9 @@
+<!-- Terminal-style animated profile -->
 <div align="center">
 
-<img width="100%" src="./assets/mountain-header.svg" alt="Gabriel Vanderlinde — banner de montanhas verde-esmeralda"/>
+<img width="100%" src="./assets/terminal_profile.gif" alt="Gabriel Vanderlinde — animated terminal profile"/>
 
-<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=20&duration=2600&pause=700&color=34D399&center=true&vCenter=true&width=800&lines=SYSTEM+ONLINE;NESTJS+%7C+JAVA+%7C+JAVASCRIPT;BACKEND+%7C+APIs+%7C+DATABASES;BUILDING+USEFUL+SOFTWARE;ALWAYS+LEARNING%2C+ALWAYS+BUILDING" alt="Typing animation"/>
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=20&duration=2600&pause=700&color=34D399&center=true&vCenter=true&width=800&lines=SYSTEM+ONLINE;JAVA+%7C+SPRING+BOOT+%7C+NESTJS;BACKEND+%7C+APIs+%7C+DATABASES;BUILDING+USEFUL+SOFTWARE;ALWAYS+LEARNING%2C+ALWAYS+BUILDING" alt="Typing animation"/>
 
 <p>
   <a href="https://github.com/GabrielVanderlinde"><img src="https://img.shields.io/badge/GitHub-View%20Profile-07130F?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/></a>
@@ -243,3 +244,16 @@ I'm open to learning, collaboration, and conversations about software developmen
 </div>
 
 <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&height=130&section=footer&color=0:020806,35:064e3b,70:047857,100:34d399" alt="Green footer"/>
+
+---
+
+## Regenerate the terminal animation
+
+The animated terminal profile is generated locally with Python and Pillow.
+
+1. Save your portrait as `assets/perfil.png`.
+2. Install Pillow: `python -m pip install Pillow`.
+3. Run `python gerar_gif.py` from the repository root.
+4. Commit the generated `assets/terminal_profile.gif`.
+
+The GIF loops continuously and can be customized in `gerar_gif.py`.
