@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent
 ART = ROOT / "assets/portrait.txt"
 OUT = ROOT / "assets/terminal_profile.gif"
 USER = "GabrielVanderlinde"
-W, H = 1500, 844
+W, H = 1100, 1340
 BG, BORDER = (12, 13, 16), (68, 72, 80)
 PROMPT, LABEL, VALUE, TEXT = (238, 240, 243), (157, 163, 172), (219, 222, 227), (205, 209, 215)
 ACCENT = (226, 229, 233)
@@ -24,7 +24,7 @@ CURSOR = "_"
 TYPE_STEP, TYPE_MS, BLINKS = 4, 45, 1
 CURSOR_MS, PAGE_PAUSE_MS = 70, 1600
 RAMP = " .,:;irsXA253hMHGS#9B&@"
-TEXT_X, TEXT_Y, TEXT_SIZE, LINE_HEIGHT = 603, 132, 13, 28
+TEXT_X, TEXT_Y, TEXT_SIZE, LINE_HEIGHT = 52, 782, 13, 28
 FONT_PATHS = (
     "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
     "/usr/share/fonts/truetype/liberation2/LiberationMono-Regular.ttf",
@@ -151,20 +151,25 @@ def load_ascii_portrait() -> list[str]:
     return lines
 
 def make_base(art: list[str]) -> Image.Image:
-    """Compose the user's ASCII portrait and a monochrome terminal in one wide canvas."""
+    """Stack the detailed ASCII portrait above a monochrome animated terminal."""
     image = Image.new("RGB", (W, H), BG)
     draw = ImageDraw.Draw(image)
 
-    # One continuous frame; the portrait and terminal share the same visual system.
-    draw.rounded_rectangle((12, 10, W - 13, H - 10), radius=12, outline=BORDER, width=1)
-    draw.line((566, 22, 566, H - 22), fill=(45, 48, 54), width=1)
+    # Subtle outer frame and soft grayscale scan lines keep the design restrained.
+    draw.rounded_rectangle((12, 10, W - 13, H - 10), radius=13, outline=BORDER, width=1)
+    for y in range(20, H - 18, 5):
+        draw.line((20, y, W - 20, y), fill=(15, 16, 19), width=1)
 
-    # Render the supplied portrait character map in neutral grayscale.
+    # Portrait section: render the supplied high-detail character map centered above the terminal.
     portrait_font = load_font(5)
     cell_w = draw.textlength("M", font=portrait_font)
-    row_step = 7.3
-    portrait_x, portrait_y = 14, 54
+    row_step = 5.55
+    max_columns = max((len(line) for line in art), default=0)
+    portrait_width = max_columns * cell_w
+    portrait_x = max(18, (W - portrait_width) / 2)
+    portrait_y = 27
     ramp_max = len(RAMP) - 1
+
     for row_index, line in enumerate(art):
         y = portrait_y + row_index * row_step
         for col_index, char in enumerate(line):
@@ -173,59 +178,87 @@ def make_base(art: list[str]) -> Image.Image:
             level = RAMP.find(char)
             if level < 0:
                 continue
-            shade = int(62 + (level / ramp_max) * 187)
-            # Add a tiny amount of natural contrast without introducing a colored tint.
+            shade = int(60 + (level / ramp_max) * 190)
             draw.text(
                 (portrait_x + col_index * cell_w, y),
                 char,
                 font=portrait_font,
                 fill=(shade, shade, shade),
             )
-    draw.text((28, H - 42), "ASCII / PORTRAIT", font=load_font(10), fill=(105, 109, 117))
 
-    # Terminal frame and classic, entirely monochrome window controls.
-    tx, ty, tr, tb = 580, 34, W - 14, H - 22
-    draw.rounded_rectangle((tx, ty, tr, tb), radius=10, outline=(76, 80, 88), width=1)
-    draw.rounded_rectangle((tx + 2, ty + 2, tr - 2, ty + 56), radius=8, fill=(23, 25, 30))
-    draw.rectangle((tx + 2, ty + 34, tr - 2, ty + 56), fill=(23, 25, 30))
-    for x, shade in ((tx + 18, 150), (tx + 35, 185), (tx + 52, 220)):
-        draw.ellipse((x, ty + 19, x + 8, ty + 27), fill=(shade, shade, shade))
-    draw.text((tx + 72, ty + 14), "gabriel@vanderlinde: ~/portfolio — zsh",
-              font=load_font(13), fill=(207, 210, 216))
-    draw.line((tx + 14, ty + 57, tr - 14, ty + 57), fill=(59, 62, 69), width=1)
+    draw.text((28, 598), "ASCII PORTRAIT  /  GRAYSCALE RENDER", font=load_font(9), fill=(112, 116, 124))
+    draw.line((24, 633, W - 24, 633), fill=(51, 54, 61), width=1)
 
-    # Main console and persistent system overview panel.
-    divider_x = 1128
-    body_top = 109
+    # Terminal sits beneath the portrait in its own window frame.
+    tx, ty, tr, tb = 28, 657, W - 28, H - 22
+    draw.rounded_rectangle((tx, ty, tr, tb), radius=10, outline=(82, 86, 94), width=1)
+    draw.rounded_rectangle((tx + 2, ty + 2, tr - 2, ty + 53), radius=8, fill=(23, 25, 30))
+    draw.rectangle((tx + 2, ty + 32, tr - 2, ty + 53), fill=(23, 25, 30))
+
+    # Window controls use shades of gray instead of the usual colored dots.
+    for x, shade in ((tx + 18, 145), (tx + 35, 180), (tx + 52, 218)):
+        draw.ellipse((x, ty + 18, x + 8, ty + 26), fill=(shade, shade, shade))
+    draw.text(
+        (tx + 72, ty + 13),
+        "gabriel@vanderlinde: ~/portfolio — zsh",
+        font=load_font(12),
+        fill=(210, 213, 218),
+    )
+    draw.line((tx + 14, ty + 54, tr - 14, ty + 54), fill=(59, 62, 69), width=1)
+
+    # Main terminal content on the left, fixed system panel on the right.
+    divider_x = 756
+    body_top = 735
     draw.line((divider_x, body_top, divider_x, tb - 16), fill=(54, 57, 64), width=1)
-    sx, sw = 1145, tr - 1161
-    draw.rounded_rectangle((sx, body_top + 2, sx + sw, tb - 17), radius=8,
-                           fill=(18, 20, 24), outline=(61, 64, 71), width=1)
-    small = load_font(11)
-    medium = load_font(13)
+
+    sx, sw = 773, tr - 795
+    panel_bottom = tb - 17
+    draw.rounded_rectangle(
+        (sx, body_top + 2, sx + sw, panel_bottom),
+        radius=8,
+        fill=(18, 20, 24),
+        outline=(61, 64, 71),
+        width=1,
+    )
+
+    small = load_font(10)
+    medium = load_font(12)
     muted = (139, 144, 153)
     bright = (224, 227, 232)
-    draw.text((sx + 20, 130), "SYSTEM OVERVIEW", font=small, fill=bright)
-    draw.line((sx + 18, 153, sx + sw - 18, 153), fill=(56, 59, 66), width=1)
-    draw.text((sx + 20, 174), "STATUS", font=small, fill=muted)
-    draw.text((sx + 20, 194), "ONLINE  ●", font=medium, fill=bright)
-    draw.text((sx + 20, 239), "CORE STACK", font=small, fill=muted)
-    draw.text((sx + 20, 260), "JAVA / SPRING", font=medium, fill=bright)
-    draw.text((sx + 20, 284), "TYPESCRIPT / NESTJS", font=medium, fill=bright)
-    draw.text((sx + 20, 329), "ENGINEERING FOCUS", font=small, fill=muted)
-    draw.text((sx + 20, 350), "APIs  •  TESTING", font=medium, fill=bright)
-    draw.text((sx + 20, 374), "OBSERVABILITY", font=medium, fill=bright)
-    draw.text((sx + 20, 419), "LOCATION", font=small, fill=muted)
-    draw.text((sx + 20, 440), "BLUMENAU, SC / BR", font=medium, fill=bright)
-    draw.line((sx + 18, 482, sx + sw - 18, 482), fill=(56, 59, 66), width=1)
-    draw.text((sx + 20, 507), ">_ BUILDING THE FUTURE", font=medium, fill=bright)
-    draw.text((sx + 20, tb - 48), "CONTINUOUS LEARNING  /  ALWAYS BUILDING",
-              font=small, fill=muted)
+    rule = (56, 59, 66)
 
-    # A footer makes the composition feel like a single composed interface.
-    draw.line((tx + 15, tb - 58, divider_x - 15, tb - 58), fill=(45, 48, 54), width=1)
-    draw.text((tx + 18, tb - 43), "PROFILE STREAM  •  UTF-8  •  LOOP: ON",
-              font=load_font(10), fill=(112, 117, 126))
+    draw.text((sx + 18, 756), "SYSTEM OVERVIEW", font=small, fill=bright)
+    draw.line((sx + 17, 778, sx + sw - 17, 778), fill=rule, width=1)
+
+    draw.text((sx + 18, 795), "STATUS", font=small, fill=muted)
+    draw.text((sx + 18, 813), "ONLINE  ●", font=medium, fill=bright)
+
+    draw.text((sx + 18, 849), "CORE STACK", font=small, fill=muted)
+    draw.text((sx + 18, 868), "JAVA / SPRING", font=medium, fill=bright)
+    draw.text((sx + 18, 891), "TYPESCRIPT / NESTJS", font=medium, fill=bright)
+    draw.text((sx + 18, 914), "NODE.JS / SQL", font=medium, fill=bright)
+
+    draw.text((sx + 18, 950), "ENGINEERING FOCUS", font=small, fill=muted)
+    draw.text((sx + 18, 969), "REST APIs  •  TESTING", font=medium, fill=bright)
+    draw.text((sx + 18, 992), "OBSERVABILITY", font=medium, fill=bright)
+
+    draw.text((sx + 18, 1028), "LOCATION", font=small, fill=muted)
+    draw.text((sx + 18, 1047), "BLUMENAU, SC / BR", font=medium, fill=bright)
+
+    draw.line((sx + 17, 1084, sx + sw - 17, 1084), fill=rule, width=1)
+    draw.text((sx + 18, 1105), ">_ BUILDING THE FUTURE", font=medium, fill=bright)
+    draw.text((sx + 18, 1133), "CONTINUOUS LEARNING", font=small, fill=muted)
+    draw.text((sx + 18, 1153), "ALWAYS BUILDING", font=small, fill=muted)
+
+    # Small footer at the bottom of the terminal window.
+    footer_y = tb - 39
+    draw.line((tx + 14, footer_y - 14, tr - 14, footer_y - 14), fill=(45, 48, 54), width=1)
+    draw.text(
+        (tx + 18, footer_y),
+        "PROFILE STREAM  •  UTF-8  •  LOOP: ON",
+        font=load_font(9),
+        fill=(112, 117, 126),
+    )
     return image
 def draw_line(draw: ImageDraw.ImageDraw, x: int, y: int, text: str,
               font: ImageFont.ImageFont, count: int | None = None) -> float:
