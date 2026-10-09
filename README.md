@@ -1,68 +1,45 @@
 # Gabriel Vanderlinde
 
-Full Stack Developer with focus on backend systems, REST APIs, and software architecture.
+Desenvolvedor de software com foco em **backend, APIs REST e desenvolvimento de aplicações**. Atualmente, estudo e desenvolvo projetos com Java, Spring Boot, TypeScript e NestJS, buscando escrever código claro, confiável e fácil de manter.
 
-## About
+[GitHub](https://github.com/GabrielVanderlinde) · [LinkedIn](https://www.linkedin.com/in/gabrielhenriquevanderlinde/)
 
-Developer focused on building robust backend solutions and modern web applications. I work mainly with Java, Spring Boot, and TypeScript/NestJS, with interest in clean architecture, database modeling, and scalable systems.
+---
 
-- Location: Blumenau, Brazil
-- Main stack: Java, Spring Boot, TypeScript, NestJS, MySQL
-- Interests: backend architecture, APIs, cloud, software quality
+## Sobre mim
 
-## Stack
+- Localização: Blumenau, Santa Catarina, Brasil
+- Foco atual: desenvolvimento backend e construção de APIs
+- Estudos: Java, Spring Boot, TypeScript, NestJS e bancos de dados
+- Interesses: arquitetura de software, qualidade de código e aprendizado contínuo
 
-### Backend
-- Java
-- Spring Boot
-- JPA/Hibernate
-- REST APIs
-- MySQL
-- PostgreSQL
-- MongoDB
+## Tecnologias
 
-### Frontend
-- HTML
-- CSS
-- JavaScript
-- TypeScript
-- React
+**Backend:** Java · Spring Boot · Node.js · NestJS · TypeScript · APIs REST
 
-### Tools
-- Git
-- GitHub
-- Docker
-- Azure
-- Postman
-- IntelliJ IDEA
-- VS Code
+**Bancos de dados:** MySQL · PostgreSQL · MongoDB
 
-## Featured Projects
+**Ferramentas:** Git · GitHub · Docker · Postman · VS Code · IntelliJ IDEA
 
-### API Projects
-- vollmed-api - Medical clinic management API
-- travel-management - Travel management API
-- tasks-management - Task management system
+**Fundamentos web:** JavaScript · HTML · CSS · React
 
-### Academic / Learning
-- senai-clinica-api - Clinical management project
-- gerenciamento-epi - EPI management and loan control
-- formacao-backend-java - Java backend training
-- formacao-nodejs-alura - Node.js training
+## Projetos em destaque
 
-## Current Focus
+| Projeto | Descrição | Tecnologias |
+| --- | --- | --- |
+| [Tasks Management](https://github.com/GabrielVanderlinde/tasks-management) | Sistema para gerenciamento de tarefas | NestJS · TypeScript · Prisma |
+| [Travel Management](https://github.com/GabrielVanderlinde/travel-management) | API para gerenciamento de viagens | Java · Spring Boot · JPA · MySQL |
+| [Rios Alerta](https://github.com/GabrielVanderlinde/Rios-Alerta) | Interface para acompanhar leituras e níveis de rios | HTML · CSS · JavaScript |
+| [Vollmed API](https://github.com/GabrielVanderlinde/vollmed-api) | Projeto de API para gestão de clínica médica | Java · Spring Boot |
+| [Gerenciador de Tarefas v2](https://github.com/GabrielVanderlinde/gerenciador-tarefas-v2) | Projeto de gerenciamento de tarefas | Consulte o repositório |
 
-- Backend architecture and design patterns
-- Java and Spring Boot
-- TypeScript and NestJS
-- Database modeling and optimization
-- Professional code quality and maintainability
+## No momento, estou aprofundando
 
-## Connect
+- Desenvolvimento de APIs com Java/Spring Boot e TypeScript/NestJS
+- Modelagem de dados e integração com bancos de dados
+- Organização, testes e manutenção de código
+- Boas práticas de desenvolvimento e arquitetura de software
 
-- GitHub: https://github.com/GabrielVanderlinde
-- LinkedIn: https://www.linkedin.com/in/gabrielhenriquevanderlinde/
+---
 
-## GitHub Stats
-
-![GitHub stats](https://github-readme-stats.vercel.app/api?username=GabrielVanderlinde&show_icons=true&theme=dark)
+*Este perfil reúne projetos práticos, estudos e minha evolução como desenvolvedor.*
