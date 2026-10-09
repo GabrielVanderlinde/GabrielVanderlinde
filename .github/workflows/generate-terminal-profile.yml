@@ -1,4 +1,5 @@
 name: Generate terminal profile GIF
+# The portrait and page background stay grayscale; Tactical Green accents are limited to the terminal UI.
 
 on:
   push:
