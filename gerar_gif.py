@@ -17,9 +17,10 @@ ART = ROOT / "assets/portrait.txt"
 OUT = ROOT / "assets/terminal_profile.gif"
 USER = "GabrielVanderlinde"
 W, H = 1100, 1340
-BG, BORDER = (12, 13, 16), (68, 72, 80)
-PROMPT, LABEL, VALUE, TEXT = (238, 240, 243), (157, 163, 172), (219, 222, 227), (205, 209, 215)
-ACCENT = (226, 229, 233)
+# Tactical Green palette: charcoal, military green, olive, and soft gray.
+BG, BORDER = (17, 20, 17), (62, 74, 59)  # #111411 / muted green-gray
+PROMPT, LABEL, VALUE, TEXT = (86, 122, 70), (163, 177, 138), (210, 213, 206), (210, 213, 206)
+ACCENT = (163, 177, 138)  # #A3B18A
 CURSOR = "_"
 TYPE_STEP, TYPE_MS, BLINKS = 4, 45, 1
 CURSOR_MS, PAGE_PAUSE_MS = 70, 1600
@@ -155,10 +156,10 @@ def make_base(art: list[str]) -> Image.Image:
     image = Image.new("RGB", (W, H), BG)
     draw = ImageDraw.Draw(image)
 
-    # Subtle outer frame and soft grayscale scan lines keep the design restrained.
+    # Subtle outer frame and charcoal-green scan lines keep the design restrained.
     draw.rounded_rectangle((12, 10, W - 13, H - 10), radius=13, outline=BORDER, width=1)
     for y in range(20, H - 18, 5):
-        draw.line((20, y, W - 20, y), fill=(15, 16, 19), width=1)
+        draw.line((20, y, W - 20, y), fill=(21, 25, 21), width=1)
 
     # Portrait section: render the supplied high-detail character map centered above the terminal.
     portrait_font = load_font(5)
@@ -187,13 +188,13 @@ def make_base(art: list[str]) -> Image.Image:
             )
 
     draw.text((28, 598), "ASCII PORTRAIT  /  GRAYSCALE RENDER", font=load_font(9), fill=(112, 116, 124))
-    draw.line((24, 633, W - 24, 633), fill=(51, 54, 61), width=1)
+    draw.line((24, 633, W - 24, 633), fill=(52, 61, 49), width=1)
 
     # Terminal sits beneath the portrait in its own window frame.
     tx, ty, tr, tb = 28, 657, W - 28, H - 22
-    draw.rounded_rectangle((tx, ty, tr, tb), radius=10, outline=(82, 86, 94), width=1)
-    draw.rounded_rectangle((tx + 2, ty + 2, tr - 2, ty + 53), radius=8, fill=(23, 25, 30))
-    draw.rectangle((tx + 2, ty + 32, tr - 2, ty + 53), fill=(23, 25, 30))
+    draw.rounded_rectangle((tx, ty, tr, tb), radius=10, outline=(79, 94, 70), width=1)
+    draw.rounded_rectangle((tx + 2, ty + 2, tr - 2, ty + 53), radius=8, fill=(23, 28, 23))
+    draw.rectangle((tx + 2, ty + 32, tr - 2, ty + 53), fill=(23, 28, 23))
 
     # Window controls use shades of gray instead of the usual colored dots.
     for x, shade in ((tx + 18, 145), (tx + 35, 180), (tx + 52, 218)):
@@ -202,30 +203,30 @@ def make_base(art: list[str]) -> Image.Image:
         (tx + 72, ty + 13),
         "gabriel@vanderlinde: ~/portfolio — zsh",
         font=load_font(12),
-        fill=(210, 213, 218),
+        fill=(210, 213, 206),
     )
-    draw.line((tx + 14, ty + 54, tr - 14, ty + 54), fill=(59, 62, 69), width=1)
+    draw.line((tx + 14, ty + 54, tr - 14, ty + 54), fill=(56, 67, 49), width=1)
 
     # Main terminal content on the left, fixed system panel on the right.
     divider_x = 756
     body_top = 735
-    draw.line((divider_x, body_top, divider_x, tb - 16), fill=(54, 57, 64), width=1)
+    draw.line((divider_x, body_top, divider_x, tb - 16), fill=(56, 67, 49), width=1)
 
     sx, sw = 773, tr - 795
     panel_bottom = tb - 17
     draw.rounded_rectangle(
         (sx, body_top + 2, sx + sw, panel_bottom),
         radius=8,
-        fill=(18, 20, 24),
-        outline=(61, 64, 71),
+        fill=(18, 22, 18),
+        outline=(61, 74, 57),
         width=1,
     )
 
     small = load_font(10)
     medium = load_font(12)
-    muted = (139, 144, 153)
-    bright = (224, 227, 232)
-    rule = (56, 59, 66)
+    muted = (123, 135, 109)  # muted olive
+    bright = (210, 213, 206)  # soft gray
+    rule = (56, 67, 49)
 
     draw.text((sx + 18, 756), "SYSTEM OVERVIEW", font=small, fill=bright)
     draw.line((sx + 17, 778, sx + sw - 17, 778), fill=rule, width=1)
@@ -252,12 +253,12 @@ def make_base(art: list[str]) -> Image.Image:
 
     # Small footer at the bottom of the terminal window.
     footer_y = tb - 39
-    draw.line((tx + 14, footer_y - 14, tr - 14, footer_y - 14), fill=(45, 48, 54), width=1)
+    draw.line((tx + 14, footer_y - 14, tr - 14, footer_y - 14), fill=(43, 52, 40), width=1)
     draw.text(
         (tx + 18, footer_y),
         "PROFILE STREAM  •  UTF-8  •  LOOP: ON",
         font=load_font(9),
-        fill=(112, 117, 126),
+        fill=(123, 135, 109),
     )
     return image
 def draw_line(draw: ImageDraw.ImageDraw, x: int, y: int, text: str,
@@ -305,8 +306,8 @@ def add_frame(frames: list[Image.Image], durations: list[int], base: Image.Image
         cursor_x = draw_line(draw, TEXT_X, y, active, font, count)
         if cursor:
             draw.text((cursor_x + 1, y), CURSOR, font=font, fill=PROMPT)
-    # Force true monochrome output: every pixel has equal R, G, and B channels.
-    frames.append(frame.convert("L").convert("RGB"))
+    # Keep the portrait itself grayscale while retaining Tactical Green accents in the terminal UI.
+    frames.append(frame)
     durations.append(duration)
 
 def generate() -> None:
