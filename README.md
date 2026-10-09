@@ -1,7 +1,7 @@
 <!-- Terminal-style animated profile -->
 <div align="center">
 
-<img width="100%" src="./assets/terminal_profile.gif" alt="Gabriel Vanderlinde — animated terminal profile"/>
+<img width="100%" src="./assets/mountain-header.svg" alt="Gabriel Vanderlinde — green mountain banner"/>
 
 <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=20&duration=2600&pause=700&color=34D399&center=true&vCenter=true&width=800&lines=SYSTEM+ONLINE;JAVA+%7C+SPRING+BOOT+%7C+NESTJS;BACKEND+%7C+APIs+%7C+DATABASES;BUILDING+USEFUL+SOFTWARE;ALWAYS+LEARNING%2C+ALWAYS+BUILDING" alt="Typing animation"/>
 
