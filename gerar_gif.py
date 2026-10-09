@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Generate the animated terminal profile GIF. Install with: python -m pip install Pillow."""
+# Rebuild trigger: keep this generator as the single source of truth for the profile animation.
 from __future__ import annotations
 import shutil
 import subprocess
