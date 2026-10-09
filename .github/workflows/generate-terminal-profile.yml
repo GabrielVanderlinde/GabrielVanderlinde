@@ -9,6 +9,8 @@ on:
       - "assets/portrait_ascii.gz.b64"
       - ".github/workflows/generate-terminal-profile.yml"
   workflow_dispatch:
+  schedule:
+    - cron: "15 9 * * 1"
 
 concurrency:
   group: terminal-profile-gif
@@ -35,6 +37,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes gifsicle
       - name: Generate animated GIF
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python gerar_gif.py
       - name: Commit generated animation safely
         run: |
