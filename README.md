@@ -1,6 +1,6 @@
 <div align="center">
 
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&height=260&color=0:020806,35:064e3b,70:047857,100:34d399&text=GABRIEL%20VANDERLINDE&fontSize=54&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=SOFTWARE%20DEVELOPER%20%7C%20BACKEND%20%7C%20APIs&descSize=17&descAlignY=58" alt="Gabriel Vanderlinde — Software Developer"/>
+<img width="100%" src="./assets/mountain-header.svg" alt="Gabriel Vanderlinde — banner de montanhas verde-esmeralda"/>
 
 <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=20&duration=2600&pause=700&color=34D399&center=true&vCenter=true&width=800&lines=SYSTEM+ONLINE;NESTJS+%7C+JAVA+%7C+JAVASCRIPT;BACKEND+%7C+APIs+%7C+DATABASES;BUILDING+USEFUL+SOFTWARE;ALWAYS+LEARNING%2C+ALWAYS+BUILDING" alt="Typing animation"/>
 
