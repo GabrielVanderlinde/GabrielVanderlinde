@@ -44,18 +44,14 @@ jobs:
         run: |
           set -euo pipefail
           generated_gif="$(mktemp)"
-          generated_portrait="$(mktemp)"
           cp assets/terminal_profile.gif "$generated_gif"
-          cp assets/readme_ascii_portrait.svg "$generated_portrait"
           for attempt in 1 2 3 4 5; do
             git fetch origin main
             git reset --hard origin/main
             cp "$generated_gif" assets/terminal_profile.gif
-            cp "$generated_portrait" assets/readme_ascii_portrait.svg
-            git add assets/terminal_profile.gif assets/readme_ascii_portrait.svg
+            git add assets/terminal_profile.gif
             if git diff --cached --quiet; then
               echo "GIF is already up to date."
-              rm -f "$generated_gif" "$generated_portrait"
               exit 0
             fi
             git config user.name "github-actions[bot]"
@@ -69,6 +65,5 @@ jobs:
             git reset --hard origin/main
             sleep 2
           done
-          rm -f "$generated_gif" "$generated_portrait"
-          echo "Could not publish GIF and portrait after 5 attempts." >&2
+          echo "Could not publish GIF after 5 attempts." >&2
           exit 1
